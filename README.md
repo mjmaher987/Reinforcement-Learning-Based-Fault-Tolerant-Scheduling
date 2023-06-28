@@ -21,8 +21,14 @@ Here are the implemeneted classes:
 And we can do the same thing for our project.
 
 
-## Second Link
-TODO
+## Second Link - AmirKabir
+![image](https://github.com/mjmaher987/Reinforcement-Learning-Based-Fault-Tolerant-Scheduling/assets/77095635/339f4514-fa7b-4574-8b31-46e9e841e0b2)
+The above image shows the full structure of cloudsim.
+
+- Machine Allocation in cloudsim:
+  1. Time-Shared Policy: Like FIFO
+  2. Space-Shared: Like Raund-Robin
+
 
 ## Third Link
 TODO
