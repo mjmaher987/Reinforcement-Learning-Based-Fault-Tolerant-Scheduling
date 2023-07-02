@@ -29,6 +29,5 @@ public class Main {
         QLearningScheduler q_learning = new QLearningScheduler();
         q_learning.main(args);
 
-
     }
 }

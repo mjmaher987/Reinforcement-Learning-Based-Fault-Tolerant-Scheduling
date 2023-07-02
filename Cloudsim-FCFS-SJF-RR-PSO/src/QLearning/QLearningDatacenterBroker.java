@@ -1,6 +1,16 @@
 package QLearning;
 
 
+// Author: Mohammad Javad Maheronnaghsh
+// CloudSim and IFogSim
+// Setup Java SDK version 16
+// Last Update: July 1st
+// Associated with Sharif University of Technology
+// Professors: Dr. Mohsen Anasari, Dr.Sepideh Safari
+// Supervisors: Abolfazl Younesi, Elyas Oustad
+
+
+
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.DatacenterBroker;
 import org.cloudbus.cloudsim.Log;
