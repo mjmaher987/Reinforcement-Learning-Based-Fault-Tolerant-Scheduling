@@ -62,15 +62,15 @@ public class A2C_Scheduler {
         int pesNumber = 1;
         UtilizationModel utilizationModel = new UtilizationModelFull();
 
-        Cloudlet[] cloudlet = new Cloudlet[cloudlets];
+//        Cloudlet[] cloudlet = new Cloudlet[cloudlets];
 
         for (int i = 0; i < cloudlets; i++) {
             int dcId = (int) (Math.random() * Constants.NO_OF_DATA_CENTERS);
             long length = (long) (1e3 * (commMatrix[i][dcId] + execMatrix[i][dcId]));
-            cloudlet[i] = new Cloudlet(idShift + i, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
-            cloudlet[i].setUserId(userId);
-            cloudlet[i].setVmId(dcId + 2);
-            list.add(cloudlet[i]);
+            Cloudlet cl = new Cloudlet(idShift + i, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
+            cl.setUserId(userId);
+            cl.setVmId(dcId + 2);
+            list.add(cl);
         }
         return list;
     }
@@ -97,7 +97,7 @@ public class A2C_Scheduler {
             }
             A2CDataCenterBroker broker = new A2CDataCenterBroker("Broker");
 
-            cloudletList = createCloudlet(broker.getId(), Constants.NO_OF_CLOUDLETS, 0);
+            cloudletList = createCloudlet(broker.getId(), Constants.NO_OF_TASKS, 0);
             vmList = createVM(broker.getId(), Constants.NO_OF_DATA_CENTERS);
 
             broker.submitCloudletList(cloudletList);
@@ -116,6 +116,35 @@ public class A2C_Scheduler {
         }
     }
 
+//    private static void printCloudletList(List<Cloudlet> list) {
+//        int size = list.size();
+//        Cloudlet cloudlet;
+//
+//        String indent = "    ";
+//        Log.printLine();
+////        Log.printLine(size);
+//        Log.printLine("========== OUTPUT ==========");
+//        Log.printLine("Cloudlet ID" + indent + "STATUS" + indent +
+//                "Data center ID" + indent + "VM ID" + indent + "Time" + indent + "Start Time" + indent + "Finish Time");
+//
+//        DecimalFormat dft = new DecimalFormat("###.##");
+//
+//        for (int i = 0; i < size; i++) {
+//            cloudlet = list.get(i);
+//            Log.print(indent + cloudlet.getCloudletId() + indent + indent);
+//
+//            if (cloudlet.getStatus() == Cloudlet.SUCCESS) {
+//                Log.print("SUCCESS");
+//
+//                Log.printLine(indent + indent + cloudlet.getResourceId() + indent + indent + indent + cloudlet.getVmId() +
+//                        indent + indent + dft.format(cloudlet.getActualCPUTime()) + indent + indent + dft.format(cloudlet.getExecStartTime()) +
+//                        indent + indent + indent + dft.format(cloudlet.getFinishTime()));
+//            }
+//            else {
+//                Log.print("Failure");
+//            }
+//        }
+//    }
     private static void printCloudletList(List<Cloudlet> list) {
         int size = list.size();
         Cloudlet cloudlet;
@@ -123,20 +152,50 @@ public class A2C_Scheduler {
         String indent = "    ";
         Log.printLine();
         Log.printLine("========== OUTPUT ==========");
-        Log.printLine("Cloudlet ID" + indent + "STATUS" + indent +
-                "Data center ID" + indent + "VM ID" + indent + "Time" + indent + "Start Time" + indent + "Finish Time");
+        Log.printLine("Cloudlet ID" + indent + "STATUS" +
+                indent + "Data center ID" +
+                indent + "VM ID" +
+                indent + indent + "Time" +
+                indent + indent+ "Start Time" +
+                indent + indent+ indent+"Finish Time"+
+                indent + "Waiting"+
+                indent + "Completion"+
+                indent + "Cost");
 
-        DecimalFormat dft = new DecimalFormat("###.##");
+        //HERE:
+        double totalCompletionTime=0;
+        double totalCost=0;
+        double totalWaitingTime=0;
+        //-------------------------
+
+        DecimalFormat dft = new DecimalFormat("####.##");
+        dft.setMinimumIntegerDigits(2);
         for (int i = 0; i < size; i++) {
             cloudlet = list.get(i);
-            Log.print(indent + cloudlet.getCloudletId() + indent + indent);
+            Log.print(indent + dft.format(cloudlet.getCloudletId()) + indent + indent);
 
-            if (cloudlet.getStatus() == Cloudlet.SUCCESS) {
+            if (cloudlet.getCloudletStatus() == Cloudlet.SUCCESS) {
                 Log.print("SUCCESS");
 
-                Log.printLine(indent + indent + cloudlet.getResourceId() + indent + indent + indent + cloudlet.getVmId() +
-                        indent + indent + dft.format(cloudlet.getActualCPUTime()) + indent + indent + dft.format(cloudlet.getExecStartTime()) +
-                        indent + indent + indent + dft.format(cloudlet.getFinishTime()));
+                //HERE:
+                double completionTime= cloudlet.getActualCPUTime()+ cloudlet.getWaitingTime();
+                double cost= cloudlet.getCostPerSec()* cloudlet.getActualCPUTime() ;
+
+                //Note: the execution time for a task is cloudlet.getActualCPUTime()
+                //----------------------
+                Log.printLine(indent + indent + dft.format(cloudlet.getResourceId()) +
+                        indent + indent + indent + dft.format(cloudlet.getVmId()) +
+                        indent + indent +indent + dft.format(cloudlet.getActualCPUTime()) +
+                        indent + indent + dft.format(cloudlet.getExecStartTime()) +
+                        indent + indent  +indent+indent+ dft.format(cloudlet.getFinishTime())+
+                        indent + indent  +indent+ dft.format(cloudlet.getWaitingTime() )+
+                        indent + indent  + dft.format(completionTime )+
+                        indent + indent + dft.format(cost));
+                //HERE:
+                totalCompletionTime += completionTime;
+                totalCost += cost;
+                totalWaitingTime+=cloudlet.getWaitingTime();
+                //-----------------------------------------
             }
         }
     }
