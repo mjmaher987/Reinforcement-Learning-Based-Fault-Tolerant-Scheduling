@@ -2,7 +2,7 @@
 
 import A2C.A2C_Scheduler;
 import FCFS.FCFS_Scheduler;
-import QLearning.QLearning_Scheduler;
+import QLearning.QLearningScheduler;
 import SJF.SJF_Scheduler;
 
 
@@ -26,8 +26,8 @@ public class Main {
         A2C_Scheduler a2c = new A2C_Scheduler();
         a2c.main(args);
 
-        QLearning_Scheduler q_learning = new QLearning_Scheduler();
-        q_learning.main(args);
+//        QLearning_Scheduler q_learning = new QLearning_Scheduler();
+//        q_learning.main(args);
 
 
     }
