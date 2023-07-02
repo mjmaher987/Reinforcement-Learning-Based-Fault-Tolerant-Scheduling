@@ -17,17 +17,13 @@ import SJF.SJF_Scheduler;
 public class Main {
     public static void main(String[] args){
         // Running 4 schedulers separately
-        FCFS_Scheduler fcfs = new FCFS_Scheduler();
-        fcfs.main(args);
+        FCFS_Scheduler.main(args);
 
-        SJF_Scheduler sjf = new SJF_Scheduler();
-        sjf.main(args);
+        SJF_Scheduler.main(args);
 
-        A2C_Scheduler a2c = new A2C_Scheduler();
-        a2c.main(args);
+        A2C_Scheduler.main(args);
 
-        QLearningScheduler q_learning = new QLearningScheduler();
-        q_learning.main(args);
+        QLearningScheduler.main(args);
 
     }
 }
