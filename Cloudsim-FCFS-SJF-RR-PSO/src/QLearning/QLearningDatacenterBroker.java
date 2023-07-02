@@ -18,12 +18,9 @@ import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
-
-import java.util.ArrayList;
-import java.util.List;
 import utils.Constants;
-import utils.DatacenterCreator;
-import utils.GenerateMatrices;
+
+import java.util.List;
 
 
 
@@ -188,6 +185,7 @@ class QLearningDatacenterBroker extends DatacenterBroker {
 //            CloudSim.getInstance().getVmAllocationPolicy().allocatePesForVm(vm, mipsArray);
 //        }
 //    }
+
     private void updateAllocatedMips(int vmId, double mipsToUpdate) {
         CustomVm vm = (CustomVm) getVmList().stream().filter(v -> v.getId() == vmId).findFirst().orElse(null);
         if (vm != null) {

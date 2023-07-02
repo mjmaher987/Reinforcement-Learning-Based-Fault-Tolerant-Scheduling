@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
 
-// Libraries for saving to excel file
 
 
 // Author: Mohammad Javad Maheronnaghsh
@@ -27,6 +26,22 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         // Running 4 schedulers separately
+        int[] tasks = {10, 20, 30, 40, 50, 200, 400, 600, 800, 1000};
+        int[] datacenters = {2, 5, 8, 10, 50, 100, 150, 200};
+//        for (int i = 0; i < 10; i++) {
+//            do_everything(args);
+//
+//            Constants.NO_OF_TASKS = tasks[i];
+//            for (int j = 0; j < 8; j++) {
+//                Constants.NO_OF_DATA_CENTERS = datacenters[j];
+//            }
+//
+//
+//        }
+        do_everything(args);
+    }
+
+    private static void do_everything(String[] args) {
         FCFS_Scheduler.main(args);
         printCloudletList(FCFS_Scheduler.getList(), FCFS_Scheduler.getExecMatrix(), FCFS_Scheduler.getCommMatrix(), "data/fcfs_data.csv");
 

@@ -39,7 +39,7 @@ TODO
 
 
 
-## GPT Answers
+## Some Definitions
 1. FogDevice:
    - Represents a fog device or edge device in the simulated environment.
    - Attributes include the device's processing capacity (mips), memory (ram), bandwidth (upBw and downBw), power consumption, and other characteristics.
