@@ -19,6 +19,8 @@ public class SJF_Scheduler {
     private static Datacenter[] datacenter;
     private static double[][] commMatrix;
     private static double[][] execMatrix;
+    private static List<Cloudlet> resultList;
+
 
     private static List<Vm> createVM(int userId, int vms) {
         //Creates a container to store VMs. This list is passed to the broker later
@@ -113,7 +115,7 @@ public class SJF_Scheduler {
 
             CloudSim.stopSimulation();
 
-            printCloudletList(newList);
+            SJF_Scheduler.resultList = newList;
 
             Log.printLine(SJF_Scheduler.class.getName() + " finished!");
         } catch (Exception e) {
@@ -126,83 +128,20 @@ public class SJF_Scheduler {
         return new SJFDatacenterBroker(name);
     }
 
-    /**
-     * Prints the Cloudlet objects
-     *
-     * @param list list of Cloudlets
-     */
-    private static void printCloudletList(List<Cloudlet> list) {
-        int size = list.size();
-        Cloudlet cloudlet;
 
-        String indent = "    ";
-        Log.printLine();
-        Log.printLine("========== OUTPUT ==========");
-        Log.printLine("Cloudlet ID" + indent + "STATUS" +
-                indent + "Data center ID" +
-                indent + "VM ID" +
-                indent + indent + "Time" +
-                indent + indent+ "Start Time" +
-                indent + indent+ indent+"Finish Time"+
-                indent + "WaitingTime"+
-                indent + "CompletionTime"+
-                indent + "Cost");
 
-        //HERE:
-        double totalCompletionTime=0;
-        double totalCost=0;
-        double totalWaitingTime=0;
-        //-------------------------
-        
-        DecimalFormat dft = new DecimalFormat("####.##");
-        dft.setMinimumIntegerDigits(2);
-        for (int i = 0; i < size; i++) {
-            cloudlet = list.get(i);
-            Log.print(indent + dft.format(cloudlet.getCloudletId()) + indent + indent);
 
-            if (cloudlet.getCloudletStatus() == Cloudlet.SUCCESS) {
-                Log.print("SUCCESS");
-                
-                //HERE:
-                double completionTime= cloudlet.getActualCPUTime()+ cloudlet.getWaitingTime();
-                double cost= cloudlet.getCostPerSec()* cloudlet.getActualCPUTime() ;
-                //Note: the execution time for a task is cloudlet.getActualCPUTime()
-                //----------------------
-                Log.printLine(indent + indent + dft.format(cloudlet.getResourceId()) +
-                        indent + indent + indent + dft.format(cloudlet.getVmId()) +
-                        indent + indent +indent + dft.format(cloudlet.getActualCPUTime()) +
-                        indent + indent + dft.format(cloudlet.getExecStartTime()) +
-                        indent + indent  +indent+indent+ dft.format(cloudlet.getFinishTime())+
-                        indent + indent  +indent+ dft.format(cloudlet.getWaitingTime() )+
-                        indent + indent  + dft.format(completionTime )+
-                        indent + indent + dft.format(cost));
-                //HERE:
-                totalCompletionTime += completionTime;
-                totalCost += cost;
-                totalWaitingTime += cloudlet.getWaitingTime();
-                
-                //-----------------------------------------
-            }
-        }
-        
-        double makespan = calcMakespan(list);
-        Log.printLine("Makespan using SJF: " + makespan);
-        //Added:
-        Log.printLine("Total Completion Time: " + totalCompletionTime +" Avg Completion Time: "+ (totalCompletionTime/size));
-        Log.printLine("Total Cost : " + totalCost+ " Avg cost: "+ (totalCost/size));
-        Log.printLine("Avg Waiting Time: "+ (totalWaitingTime/size));
+
+
+    public static List<Cloudlet> getList() {
+        return resultList;
     }
 
-    private static double calcMakespan(List<Cloudlet> list) {
-        double makespan = 0;
-        double[] dcWorkingTime = new double[Constants.NO_OF_DATA_CENTERS];
+    public static double[][] getExecMatrix() {
+        return execMatrix;
+    }
 
-        for (int i = 0; i < Constants.NO_OF_TASKS; i++) {
-            int dcId = list.get(i).getVmId() % Constants.NO_OF_DATA_CENTERS;
-            if (dcWorkingTime[dcId] != 0) --dcWorkingTime[dcId];
-            dcWorkingTime[dcId] += execMatrix[i][dcId] + commMatrix[i][dcId];
-            makespan = Math.max(makespan, dcWorkingTime[dcId]);
-        }
-        return makespan;
+    public static double[][] getCommMatrix() {
+        return commMatrix;
     }
 }

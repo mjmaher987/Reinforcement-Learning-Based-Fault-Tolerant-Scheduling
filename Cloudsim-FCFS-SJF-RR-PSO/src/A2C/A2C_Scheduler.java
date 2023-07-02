@@ -1,20 +1,15 @@
 package A2C;
 
-import org.cloudbus.cloudsim.Log;
 
 import org.cloudbus.cloudsim.*;
 import org.cloudbus.cloudsim.core.CloudSim;
-
 import utils.Constants;
 import utils.DatacenterCreator;
 import utils.GenerateMatrices;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-
 
 
 // Implementing A2C Scheduler: Advantage Actor-Critic
@@ -32,6 +27,7 @@ public class A2C_Scheduler {
     private static Datacenter[] datacenter;
     private static double[][] commMatrix;
     private static double[][] execMatrix;
+    private static List<Cloudlet> resultList;
 
     private static List<Vm> createVM(int userId, int vms) {
         LinkedList<Vm> list = new LinkedList<>();
@@ -108,12 +104,24 @@ public class A2C_Scheduler {
             List<Cloudlet> resultList = broker.getCloudletReceivedList();
             CloudSim.stopSimulation();
 
-            printCloudletList(resultList);
 
+            A2C_Scheduler.resultList = resultList;
             Log.printLine("A2C Scheduler finished!");
         } catch (Exception e) {
             Log.printLine("Unwanted errors happen");
         }
+    }
+
+    public static List<Cloudlet> getList() {
+        return A2C_Scheduler.resultList;
+    }
+
+    public static double[][] getExecMatrix() {
+        return A2C_Scheduler.execMatrix;
+    }
+
+    public static double[][] getCommMatrix() {
+        return A2C_Scheduler.commMatrix;
     }
 
 //    private static void printCloudletList(List<Cloudlet> list) {
@@ -145,60 +153,6 @@ public class A2C_Scheduler {
 //            }
 //        }
 //    }
-    private static void printCloudletList(List<Cloudlet> list) {
-        int size = list.size();
-        Cloudlet cloudlet;
-
-        String indent = "    ";
-        Log.printLine();
-        Log.printLine("========== OUTPUT ==========");
-        Log.printLine("Cloudlet ID" + indent + "STATUS" +
-                indent + "Data center ID" +
-                indent + "VM ID" +
-                indent + indent + "Time" +
-                indent + indent+ "Start Time" +
-                indent + indent+ indent+"Finish Time"+
-                indent + "Waiting"+
-                indent + "Completion"+
-                indent + "Cost");
-
-        //HERE:
-        double totalCompletionTime=0;
-        double totalCost=0;
-        double totalWaitingTime=0;
-        //-------------------------
-
-        DecimalFormat dft = new DecimalFormat("####.##");
-        dft.setMinimumIntegerDigits(2);
-        for (int i = 0; i < size; i++) {
-            cloudlet = list.get(i);
-            Log.print(indent + dft.format(cloudlet.getCloudletId()) + indent + indent);
-
-            if (cloudlet.getCloudletStatus() == Cloudlet.SUCCESS) {
-                Log.print("SUCCESS");
-
-                //HERE:
-                double completionTime= cloudlet.getActualCPUTime()+ cloudlet.getWaitingTime();
-                double cost= cloudlet.getCostPerSec()* cloudlet.getActualCPUTime() ;
-
-                //Note: the execution time for a task is cloudlet.getActualCPUTime()
-                //----------------------
-                Log.printLine(indent + indent + dft.format(cloudlet.getResourceId()) +
-                        indent + indent + indent + dft.format(cloudlet.getVmId()) +
-                        indent + indent +indent + dft.format(cloudlet.getActualCPUTime()) +
-                        indent + indent + dft.format(cloudlet.getExecStartTime()) +
-                        indent + indent  +indent+indent+ dft.format(cloudlet.getFinishTime())+
-                        indent + indent  +indent+ dft.format(cloudlet.getWaitingTime() )+
-                        indent + indent  + dft.format(completionTime )+
-                        indent + indent + dft.format(cost));
-                //HERE:
-                totalCompletionTime += completionTime;
-                totalCost += cost;
-                totalWaitingTime+=cloudlet.getWaitingTime();
-                //-----------------------------------------
-            }
-        }
-    }
 
 
 }
