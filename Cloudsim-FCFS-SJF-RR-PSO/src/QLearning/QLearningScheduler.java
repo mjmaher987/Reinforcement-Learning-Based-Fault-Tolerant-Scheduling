@@ -182,7 +182,7 @@ public class QLearningScheduler {
         }
 
         double makespan = calcMakespan(list);
-        Log.printLine("Makespan using FCFS: " + makespan);
+        Log.printLine("Makespan using QLearning: " + makespan);
         //Added:
         Log.printLine("Total Completion Time: " + totalCompletionTime +" Avg Completion Time: "+ (totalCompletionTime/size));
         Log.printLine("Total Cost : " + totalCost+ " Avg cost: "+ (totalCost/size));

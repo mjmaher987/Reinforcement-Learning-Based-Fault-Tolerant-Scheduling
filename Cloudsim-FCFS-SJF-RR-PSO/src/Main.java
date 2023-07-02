@@ -26,8 +26,8 @@ public class Main {
         A2C_Scheduler a2c = new A2C_Scheduler();
         a2c.main(args);
 
-//        QLearning_Scheduler q_learning = new QLearning_Scheduler();
-//        q_learning.main(args);
+        QLearningScheduler q_learning = new QLearningScheduler();
+        q_learning.main(args);
 
 
     }
