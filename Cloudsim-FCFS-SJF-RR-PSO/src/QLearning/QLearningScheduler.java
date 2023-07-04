@@ -31,6 +31,17 @@ public class QLearningScheduler {
     private static List<Cloudlet> resultList;
 
 
+    /*
+     Function Name:
+        createVM
+     Functionality:
+        create virtual machine with the given userid and preferred general parameters
+     input(s):
+        int userId: the userid related to this VM (this is not important that much!)
+        int vms: number of virtual machines to be created
+     output(s):
+        List<Vm> list: list of all  created VMs
+    */
     private static List<Vm> createVM(int userId, int vms) {
         // Creates a container to store VMs. This list is passed to the broker later
         LinkedList<Vm> list = new LinkedList<>();
@@ -54,6 +65,19 @@ public class QLearningScheduler {
         return list;
     }
 
+
+    /*
+     Function Name:
+        createCloudlet
+     Functionality:
+        create cloudlets (tasks) with the given userid and preferred general parameters
+     input(s):
+        int userId: the userid related to this VM (this is not important that much!)
+        int cloudlets: number of cloudlets (tasks) to be created
+        int idShift: Not important for this project!
+     output(s):
+        List<Vm> list: list of all  created VMs
+    */
     private static List<Cloudlet> createCloudlet(int userId, int cloudlets, int idShift) {
         // Creates a container to store Cloudlets
         LinkedList<Cloudlet> list = new LinkedList<>();
@@ -77,6 +101,8 @@ public class QLearningScheduler {
         }
         return list;
     }
+
+
 
     public static void main(String[] args) {
         Log.printLine("Starting Q-Learning Scheduler...");
