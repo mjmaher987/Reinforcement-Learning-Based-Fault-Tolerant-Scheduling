@@ -187,5 +187,4 @@ public class Main {
         }
         return makespan;
     }
-
 }
