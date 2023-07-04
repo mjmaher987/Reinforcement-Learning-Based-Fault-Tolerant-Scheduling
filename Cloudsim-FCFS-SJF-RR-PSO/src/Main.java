@@ -14,7 +14,6 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 
-
 // Author: Mohammad Javad Maheronnaghsh
 // CloudSim and IFogSim
 // Setup Java SDK version 16
@@ -28,6 +27,8 @@ public class Main {
         // Running 4 schedulers separately
         int[] tasks = {10, 20, 30, 40, 50, 200, 400, 600, 800, 1000};
         int[] datacenters = {2, 5, 8, 10, 50, 100, 150, 200};
+
+        // Iterate over all possible number of task_n and datacenter_n
 //        for (int i = 0; i < 10; i++) {
 //            do_everything(args);
 //
@@ -38,26 +39,61 @@ public class Main {
 //
 //
 //        }
+
+        // Set the number of tasks and number of datacenters arbitrarily
+        Constants.NO_OF_TASKS = tasks[5];
+        Constants.NO_OF_DATA_CENTERS = datacenters[2];
+
         do_everything(args);
     }
 
+
+    /*
+     Function Name:
+        do_everything
+     Functionality:
+        execute all scheduling policies
+     input(s):
+        String[] args: this is the first input of the main function for start execution
+     output(s):
+        void: this function doesn't return anything directly, rather it saves the necessary data
+            to .csv files and also prints the log data
+    */
     private static void do_everything(String[] args) {
+        // Execute the FCFS Scheduler
         FCFS_Scheduler.main(args);
-        printCloudletList(FCFS_Scheduler.getList(), FCFS_Scheduler.getExecMatrix(), FCFS_Scheduler.getCommMatrix(), "data/fcfs_data.csv");
+        save_outputs(FCFS_Scheduler.getList(), FCFS_Scheduler.getExecMatrix(), FCFS_Scheduler.getCommMatrix(), "data/fcfs_data.csv");
 
-
+        // Execute the SJF Scheduler
         SJF_Scheduler.main(args);
-        printCloudletList(SJF_Scheduler.getList(), SJF_Scheduler.getExecMatrix(), SJF_Scheduler.getCommMatrix(), "data/sjf_data.csv");
+        save_outputs(SJF_Scheduler.getList(), SJF_Scheduler.getExecMatrix(), SJF_Scheduler.getCommMatrix(), "data/sjf_data.csv");
 
+        // Execute the A2C Scheduler
         A2C_Scheduler.main(args);
-        printCloudletList(A2C_Scheduler.getList(), A2C_Scheduler.getExecMatrix(), A2C_Scheduler.getCommMatrix(), "data/a2c_data.csv");
+        save_outputs(A2C_Scheduler.getList(), A2C_Scheduler.getExecMatrix(), A2C_Scheduler.getCommMatrix(), "data/a2c_data.csv");
 
+        // Execute the Q-Learning Scheduler
         QLearningScheduler.main(args);
-        printCloudletList(QLearningScheduler.getList(), QLearningScheduler.getExecMatrix(), QLearningScheduler.getCommMatrix(), "data/qlearning_data.csv");
+        save_outputs(QLearningScheduler.getList(), QLearningScheduler.getExecMatrix(), QLearningScheduler.getCommMatrix(), "data/qlearning_data.csv");
 
     }
 
-    public static void printCloudletList(List<Cloudlet> list, double[][] execMatrix, double[][] commMatrix, String csvFilePath) {
+
+    /*
+     Function Name:
+        save_outputs
+     Functionality:
+        save the outputs of all schedulers to .csv files
+     input(s):
+        List<Cloudlet> list: the list of all tasks (cloudlets)
+        double[][] execMatrix: execution time of cloudlets on different data centers.
+        double[][] commMatrix: communication cost between different cloudlets and data centers
+        String csvFilePath: filepath of the csv file (that has to be saved)
+     output(s):
+        void: this function doesn't return anything directly, rather it saves the necessary data
+            to .csv files
+    */
+    public static void save_outputs(List<Cloudlet> list, double[][] execMatrix, double[][] commMatrix, String csvFilePath) {
         int size = list.size();
         Cloudlet cloudlet;
 
@@ -125,131 +161,20 @@ public class Main {
         }
     }
 
-//    public static void printCloudletList(List<Cloudlet> list, double[][] execMatrix, double[][] commMatrix) {
-//        try (Workbook workbook = new XSSFWorkbook()) {
-//            Sheet sheet = workbook.createSheet("Cloudlet List");
-//
-//            // Create headers
-//            Row headerRow = sheet.createRow(0);
-//            headerRow.createCell(0).setCellValue("Cloudlet ID");
-//            headerRow.createCell(1).setCellValue("Status");
-//            headerRow.createCell(2).setCellValue("Data Center ID");
-//            headerRow.createCell(3).setCellValue("VM ID");
-//            headerRow.createCell(4).setCellValue("Time");
-//            headerRow.createCell(5).setCellValue("Start Time");
-//            headerRow.createCell(6).setCellValue("Finish Time");
-//            headerRow.createCell(7).setCellValue("Waiting");
-//            headerRow.createCell(8).setCellValue("Completion");
-//            headerRow.createCell(9).setCellValue("Cost");
-//
-//            // Populate data
-//            DecimalFormat dft = new DecimalFormat("####.##");
-//            dft.setMinimumIntegerDigits(2);
-//            for (int i = 0; i < list.size(); i++) {
-//                Cloudlet cloudlet = list.get(i);
-//                Row row = sheet.createRow(i + 1);
-//                row.createCell(0).setCellValue(dft.format(cloudlet.getCloudletId()));
-//                row.createCell(1).setCellValue(cloudlet.getCloudletStatus() == Cloudlet.SUCCESS ? "SUCCESS" : "Failure");
-//                row.createCell(2).setCellValue(dft.format(cloudlet.getResourceId()));
-//                row.createCell(3).setCellValue(dft.format(cloudlet.getVmId()));
-//                row.createCell(4).setCellValue(dft.format(cloudlet.getActualCPUTime()));
-//                row.createCell(5).setCellValue(dft.format(cloudlet.getExecStartTime()));
-//                row.createCell(6).setCellValue(dft.format(cloudlet.getFinishTime()));
-//                row.createCell(7).setCellValue(dft.format(cloudlet.getWaitingTime()));
-//                double completionTime = cloudlet.getActualCPUTime() + cloudlet.getWaitingTime();
-//                row.createCell(8).setCellValue(dft.format(completionTime));
-//                double cost = cloudlet.getCostPerSec() * cloudlet.getActualCPUTime();
-//                row.createCell(9).setCellValue(dft.format(cost));
-//            }
-//
-//            // Create a sheet for execMatrix
-//            Sheet execMatrixSheet = workbook.createSheet("Exec Matrix");
-//            for (int i = 0; i < execMatrix.length; i++) {
-//                Row row = execMatrixSheet.createRow(i);
-//                for (int j = 0; j < execMatrix[i].length; j++) {
-//                    row.createCell(j).setCellValue(execMatrix[i][j]);
-//                }
-//            }
-//
-//            // Create a sheet for commMatrix
-//            Sheet commMatrixSheet = workbook.createSheet("Comm Matrix");
-//            for (int i = 0; i < commMatrix.length; i++) {
-//                Row row = commMatrixSheet.createRow(i);
-//                for (int j = 0; j < commMatrix[i].length; j++) {
-//                    row.createCell(j).setCellValue(commMatrix[i][j]);
-//                }
-//            }
-//
-//            try (FileOutputStream fileOut = new FileOutputStream("output.xlsx")) {
-//                workbook.write(fileOut);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
-
-//    public static void printCloudletList(List<Cloudlet> list, double[][] execMatrix, double[][] commMatrix) {
-//        int size = list.size();
-//        Cloudlet cloudlet;
-//
-//        String indent = "    ";
-//        Log.printLine();
-//        Log.printLine("========== OUTPUT ==========");
-//        Log.printLine("Cloudlet ID" + indent + "STATUS" +
-//                indent + "Data center ID" +
-//                indent + "VM ID" +
-//                indent + indent + "Time" +
-//                indent + indent+ "Start Time" +
-//                indent + indent+ indent+"Finish Time"+
-//                indent + "Waiting"+
-//                indent + "Completion"+
-//                indent + "Cost");
-//
-//        //HERE:
-//        double totalCompletionTime=0;
-//        double totalCost=0;
-//        double totalWaitingTime=0;
-//        //-------------------------
-//
-//        DecimalFormat dft = new DecimalFormat("####.##");
-//        dft.setMinimumIntegerDigits(2);
-//        for (int i = 0; i < size; i++) {
-//            cloudlet = list.get(i);
-//            Log.print(indent + dft.format(cloudlet.getCloudletId()) + indent + indent);
-//
-//            if (cloudlet.getCloudletStatus() == Cloudlet.SUCCESS) {
-//                Log.print("SUCCESS");
-//
-//                //HERE:
-//                double completionTime= cloudlet.getActualCPUTime()+ cloudlet.getWaitingTime();
-//                double cost= cloudlet.getCostPerSec()* cloudlet.getActualCPUTime() ;
-//
-//                //Note: the execution time for a task is cloudlet.getActualCPUTime()
-//                //----------------------
-//                Log.printLine(indent + indent + dft.format(cloudlet.getResourceId()) +
-//                        indent + indent + indent + dft.format(cloudlet.getVmId()) +
-//                        indent + indent +indent + dft.format(cloudlet.getActualCPUTime()) +
-//                        indent + indent + dft.format(cloudlet.getExecStartTime()) +
-//                        indent + indent  +indent+indent+ dft.format(cloudlet.getFinishTime())+
-//                        indent + indent  +indent+ dft.format(cloudlet.getWaitingTime() )+
-//                        indent + indent  + dft.format(completionTime )+
-//                        indent + indent + dft.format(cost));
-//                //HERE:
-//                totalCompletionTime += completionTime;
-//                totalCost += cost;
-//                totalWaitingTime+=cloudlet.getWaitingTime();
-//                //-----------------------------------------
-//            }
-//        }
-//        double makespan = calcMakespan(list, execMatrix, commMatrix);
-//        Log.printLine("Makespan using QLearning: " + makespan);
-//        //Added:
-//        Log.printLine("Total Completion Time: " + totalCompletionTime +" Avg Completion Time: "+ (totalCompletionTime/size));
-//        Log.printLine("Total Cost : " + totalCost+ " Avg cost: "+ (totalCost/size));
-//        Log.printLine("Avg Waiting Time: "+ (totalWaitingTime/size));
-//    }
-
+    /*
+     Function Name:
+        calcMakespan
+     Functionality:
+        calculates the makespan of a set of cloudlets executed on different data centers.
+        The makespan is a metric that represents the total time taken to complete all the cloudlets in the simulation.
+     input(s):
+        List<Cloudlet> list: the list of all tasks (cloudlets)
+        double[][] execMatrix: execution time of cloudlets on different data centers.
+        double[][] commMatrix: communication cost between different cloudlets and data centers
+     output(s):
+        double makespan: the makespan of the cloudlets on the datacenters (that is a float number)
+    */
     private static double calcMakespan(List<Cloudlet> list, double[][] execMatrix, double[][] commMatrix) {
         double makespan = 0;
         double[] dcWorkingTime = new double[Constants.NO_OF_DATA_CENTERS];

@@ -20,8 +20,6 @@ import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
 import utils.Constants;
 
-import java.util.List;
-
 
 
 class QLearningDatacenterBroker extends DatacenterBroker {
@@ -102,24 +100,7 @@ class QLearningDatacenterBroker extends DatacenterBroker {
         return maxValue;
     }
 
-//    protected void cloudletExecution(Cloudlet cloudlet) {
-//        if (getCloudletList().size() == 0 && cloudletsSubmitted == 0) { // all cloudlets executed
-//            Log.printLine(CloudSim.clock() + ": " + getName() + ": All cloudlets executed. Finishing...");
-//            CloudSim.terminateSimulation();
-//        } else {
-//            if (cloudlet.getCloudletStatus() == Cloudlet.CREATED) {
-//                cloudlet.setCloudletStatus(Cloudlet.INEXEC);
-//                cloudlet.setExecStartTime(CloudSim.clock());
-//                updateAllocatedMips(cloudlet.getVm(), cloudlet.getVm().getMips() - cloudlet.getCloudletLength());
-//            } else if (cloudlet.getRemainingCloudletLength() == 0) {
-//                cloudlet.setCloudletStatus(Cloudlet.SUCCESS);
-//                cloudlet.setExecFinishTime(CloudSim.clock());
-//                cloudlet.getVm().setMips(cloudlet.getVm().getMips() + cloudlet.getCloudletLength());
-//                cloudletsSubmitted++;
-//                updateQTable(currentState, cloudlet.getCloudletId(), cloudlet.getExecFinishTime(), -1);
-//            }
-//        }
-//    }
+
 
     @Override
     public void processEvent(SimEvent ev) {
@@ -137,15 +118,6 @@ class QLearningDatacenterBroker extends DatacenterBroker {
     }
 
     private void processCloudletSubmit(SimEvent ev) {
-//        Cloudlet cloudlet = (Cloudlet) ev.getData();
-//        getCloudletList().add(cloudlet);
-//        cloudlet.setCloudletStatus(Cloudlet.INEXEC);
-//        cloudlet.setVmId(cloudlet.getVmId());
-//        cloudlet.setExecStartTime(CloudSim.clock());
-//        updateAllocatedMips(cloudlet.getVmId(), cloudlet.getVm().getMips() - cloudlet.getCloudletLength());
-//        int action = selectAction();
-//        updateQTable(currentState, action, CloudSim.clock(), cloudlet.getCloudletId());
-//        currentState = cloudlet.getCloudletId();
         Cloudlet cloudlet = (Cloudlet) ev.getData();
         getCloudletList().add(cloudlet);
         try {
@@ -166,25 +138,6 @@ class QLearningDatacenterBroker extends DatacenterBroker {
             Log.printLine(CloudSim.clock() + ": " + getName() + ": No available VMs. Postponing cloudlet " + cloudlet.getCloudletId());
         }
     }
-
-//    private void updateAllocatedMips(int vmId, double mipsToUpdate) {
-//        Vm vm = getVmList().stream().filter(v -> v.getId() == vmId).findFirst().orElse(null);
-//        if (vm != null) {
-//            double currentMips = vm.getMips();
-//            double updatedMips = currentMips - mipsToUpdate;
-//            vm.setMips(updatedMips);
-//        }
-//    }
-//    private void updateAllocatedMips(int vmId, double mipsToUpdate) {
-//        Vm vm = getVmList().stream().filter(v -> v.getId() == vmId).findFirst().orElse(null);
-//        if (vm != null) {
-//            double currentMips = vm.getCurrentRequestedTotalMips();
-//            double updatedMips = currentMips - mipsToUpdate;
-//            double[] mipsArray = { updatedMips };
-//            CloudSim.getInstance().getVmAllocationPolicy().deallocatePesForVm(vm);
-//            CloudSim.getInstance().getVmAllocationPolicy().allocatePesForVm(vm, mipsArray);
-//        }
-//    }
 
     private void updateAllocatedMips(int vmId, double mipsToUpdate) {
         CustomVm vm = (CustomVm) getVmList().stream().filter(v -> v.getId() == vmId).findFirst().orElse(null);
@@ -215,18 +168,6 @@ class QLearningDatacenterBroker extends DatacenterBroker {
         int action = selectAction();
         updateQTable(currentState, action, CloudSim.clock(), nextState);
         currentState = nextState;
-//        cloudlet.setExecFinishTime(CloudSim.clock());
-//        cloudlet.getVm().setMips(cloudlet.getVm().getMips() + cloudlet.getCloudletLength());
-//        cloudletsSubmitted++;
-//        int nextState;
-//        if (cloudletsSubmitted < totalStates) {
-//            nextState = cloudletsSubmitted;
-//        } else {
-//            nextState = -1;
-//        }
-//        int action = selectAction();
-//        updateQTable(currentState, action, cloudlet.getExecFinishTime(), nextState);
-//        currentState = nextState;
     }
 
     @Override
@@ -240,21 +181,42 @@ class QLearningDatacenterBroker extends DatacenterBroker {
         Log.printLine(getName() + " is shutting down...");
     }
 
-//    @Override
-    public void allocateVmForCloudlet(Cloudlet cloudlet, List<CustomVm> vmList) throws Exception {
-        if (vmList.size() == 0) {
-            Log.printLine(CloudSim.clock() + ": " + getName() + ": No available VMs. Postponing cloudlet " + cloudlet.getCloudletId());
-        } else {
-            CustomVm vm = vmList.get(0);
-            cloudlet.setVmId(vm.getId());
-            getCloudletList().add(cloudlet);
-            cloudlet.setCloudletStatus(Cloudlet.INEXEC);
-            cloudlet.setVmId(vm.getId());
-            cloudlet.setExecStartTime(CloudSim.clock());
-            updateAllocatedMips(vm.getId(), vm.getMips() - cloudlet.getCloudletLength());
-            int action = selectAction();
-            updateQTable(currentState, action, CloudSim.clock(), cloudlet.getCloudletId());
-            currentState = cloudlet.getCloudletId();
-        }
-    }
+    // Commented Codes
+////    @Override
+//    public void allocateVmForCloudlet(Cloudlet cloudlet, List<CustomVm> vmList) throws Exception {
+//        if (vmList.size() == 0) {
+//            Log.printLine(CloudSim.clock() + ": " + getName() + ": No available VMs. Postponing cloudlet " + cloudlet.getCloudletId());
+//        } else {
+//            CustomVm vm = vmList.get(0);
+//            cloudlet.setVmId(vm.getId());
+//            getCloudletList().add(cloudlet);
+//            cloudlet.setCloudletStatus(Cloudlet.INEXEC);
+//            cloudlet.setVmId(vm.getId());
+//            cloudlet.setExecStartTime(CloudSim.clock());
+//            updateAllocatedMips(vm.getId(), vm.getMips() - cloudlet.getCloudletLength());
+//            int action = selectAction();
+//            updateQTable(currentState, action, CloudSim.clock(), cloudlet.getCloudletId());
+//            currentState = cloudlet.getCloudletId();
+//        }
+//    }
+
+
+    //    protected void cloudletExecution(Cloudlet cloudlet) {
+//        if (getCloudletList().size() == 0 && cloudletsSubmitted == 0) { // all cloudlets executed
+//            Log.printLine(CloudSim.clock() + ": " + getName() + ": All cloudlets executed. Finishing...");
+//            CloudSim.terminateSimulation();
+//        } else {
+//            if (cloudlet.getCloudletStatus() == Cloudlet.CREATED) {
+//                cloudlet.setCloudletStatus(Cloudlet.INEXEC);
+//                cloudlet.setExecStartTime(CloudSim.clock());
+//                updateAllocatedMips(cloudlet.getVm(), cloudlet.getVm().getMips() - cloudlet.getCloudletLength());
+//            } else if (cloudlet.getRemainingCloudletLength() == 0) {
+//                cloudlet.setCloudletStatus(Cloudlet.SUCCESS);
+//                cloudlet.setExecFinishTime(CloudSim.clock());
+//                cloudlet.getVm().setMips(cloudlet.getVm().getMips() + cloudlet.getCloudletLength());
+//                cloudletsSubmitted++;
+//                updateQTable(currentState, cloudlet.getCloudletId(), cloudlet.getExecFinishTime(), -1);
+//            }
+//        }
+//    }
 }

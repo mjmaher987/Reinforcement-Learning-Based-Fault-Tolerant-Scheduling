@@ -65,7 +65,7 @@ public class FCFS_Scheduler {
             int dcId = (int) (Math.random() * Constants.NO_OF_DATA_CENTERS);
            long length = (long) (1e3 * (commMatrix[i][dcId] + execMatrix[i][dcId]));
             //new
-           // long length= minLength + (int) (Math.random() * (maxLenght));
+            // long length= minLength + (int) (Math.random() * (maxLenght));
             cloudlet[i] = new Cloudlet(idShift + i, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
             // setting the owner of these Cloudlets
             cloudlet[i].setUserId(userId);

@@ -10,6 +10,11 @@ Related to the article that is going to be published.
 - What is iFogSim : https://amirkabir-science.com/cloudsim-free-course/
 - iFogSim Workshop : youtube.com/watch?v=rEy_rSRfXIc
 
+## Important Notes
+- Delete these 2 files (Note: This issue may be resolved on the next versions)
+   - Delete CommunicationTimeMatrix.txt
+   - Delete ExecutionTimeMatrix.txt
+
 
 ## First Link
 These are the objective of this project:

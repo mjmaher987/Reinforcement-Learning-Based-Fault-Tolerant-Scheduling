@@ -86,7 +86,7 @@ public class QLearningScheduler {
         commMatrix = GenerateMatrices.getCommMatrix();
 
         try {
-            int num_user = 1;   // number of grid users
+            int num_user = 1;
             Calendar calendar = Calendar.getInstance();
             boolean trace_flag = false;  // mean trace events
 
