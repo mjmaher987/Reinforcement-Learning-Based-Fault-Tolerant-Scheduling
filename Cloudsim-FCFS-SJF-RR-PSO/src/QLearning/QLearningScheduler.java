@@ -103,7 +103,16 @@ public class QLearningScheduler {
     }
 
 
-
+    /*
+     Function Name:
+        main
+     Functionality:
+        run Q-Learning Scheduler
+     input(s):
+        String[] args: Not important.
+     output(s):
+        void: it doesn't return anything, it rather schedules the tasks based on the policy
+    */
     public static void main(String[] args) {
         Log.printLine("Starting Q-Learning Scheduler...");
 
@@ -152,10 +161,21 @@ public class QLearningScheduler {
         }
     }
 
+
+
+    /*
+     Function Name:
+        createBroker
+     Functionality:
+        create DataCenter Broker related to this scheduler
+     input(s):
+        String name: name of the broker (arbitrary; it is not important that much)
+     output(s):
+        QLearningDatacenterBroker: a datacenter broker object
+    */
     private static QLearningDatacenterBroker createBroker(String name) throws Exception {
         return new QLearningDatacenterBroker(name);
     }
-
 
     public static List<Cloudlet> getList() {
         return resultList;

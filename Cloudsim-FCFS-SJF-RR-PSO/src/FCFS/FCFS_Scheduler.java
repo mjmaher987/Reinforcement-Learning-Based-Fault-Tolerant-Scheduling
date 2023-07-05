@@ -22,6 +22,18 @@ public class FCFS_Scheduler {
     private static double[][] execMatrix;
     private static List<Cloudlet> resultList;
 
+
+    /*
+     Function Name:
+        createVM
+     Functionality:
+        create virtual machine with the given userid and preferred general parameters
+     input(s):
+        int userId: the userid related to this VM (this is not important that much!)
+        int vms: number of virtual machines to be created
+     output(s):
+        List<Vm> list: list of all  created VMs
+    */
     private static List<Vm> createVM(int userId, int vms) {
         //Creates a container to store VMs. This list is passed to the broker later
         LinkedList<Vm> list = new LinkedList<Vm>();
@@ -45,6 +57,18 @@ public class FCFS_Scheduler {
         return list;
     }
 
+    /*
+     Function Name:
+        createCloudlet
+     Functionality:
+        create cloudlets (tasks) with the given userid and preferred general parameters
+     input(s):
+        int userId: the userid related to this VM (this is not important that much!)
+        int cloudlets: number of cloudlets (tasks) to be created
+        int idShift: Not important for this project!
+     output(s):
+        List<Vm> list: list of all  created VMs
+    */
     private static List<Cloudlet> createCloudlet(int userId, int cloudlets, int idShift) {
         // Creates a container to store Cloudlets
         LinkedList<Cloudlet> list = new LinkedList<Cloudlet>();
@@ -75,6 +99,17 @@ public class FCFS_Scheduler {
         return list;
     }
 
+
+    /*
+     Function Name:
+        main
+     Functionality:
+        run Q-Learning Scheduler
+     input(s):
+        String[] args: Not important.
+     output(s):
+        void: it doesn't return anything, it rather schedules the tasks based on the policy
+    */
     public static List<Cloudlet> main(String[] args) {
         Log.printLine("Starting FCFS Scheduler...");
 
@@ -125,6 +160,17 @@ public class FCFS_Scheduler {
         return null;
     }
 
+
+    /*
+     Function Name:
+        createBroker
+     Functionality:
+        create DataCenter Broker related to this scheduler
+     input(s):
+        String name: name of the broker (arbitrary; it is not important that much)
+     output(s):
+        FCFSDatacenterBroker: a datacenter broker object
+    */
     private static FCFSDatacenterBroker createBroker(String name) throws Exception {
         return new FCFSDatacenterBroker(name);
     }

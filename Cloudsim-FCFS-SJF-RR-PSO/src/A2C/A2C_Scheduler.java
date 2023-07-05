@@ -29,6 +29,17 @@ public class A2C_Scheduler {
     private static double[][] execMatrix;
     private static List<Cloudlet> resultList;
 
+    /*
+     Function Name:
+        createVM
+     Functionality:
+        create virtual machine with the given userid and preferred general parameters
+     input(s):
+        int userId: the userid related to this VM (this is not important that much!)
+        int vms: number of virtual machines to be created
+     output(s):
+        List<Vm> list: list of all  created VMs
+    */
     private static List<Vm> createVM(int userId, int vms) {
         LinkedList<Vm> list = new LinkedList<>();
 
@@ -50,6 +61,18 @@ public class A2C_Scheduler {
     }
 
 
+    /*
+     Function Name:
+        createCloudlet
+     Functionality:
+        create cloudlets (tasks) with the given userid and preferred general parameters
+     input(s):
+        int userId: the userid related to this VM (this is not important that much!)
+        int cloudlets: number of cloudlets (tasks) to be created
+        int idShift: Not important for this project!
+     output(s):
+        List<Vm> list: list of all  created VMs
+    */
     private static List<Cloudlet> createCloudlet(int userId, int cloudlets, int idShift) {
         LinkedList<Cloudlet> list = new LinkedList<>();
 
@@ -73,6 +96,16 @@ public class A2C_Scheduler {
 
 
 
+    /*
+     Function Name:
+        main
+     Functionality:
+        run Q-Learning Scheduler
+     input(s):
+        String[] args: Not important.
+     output(s):
+        void: it doesn't return anything, it rather schedules the tasks based on the policy
+    */
     public static void main(String[] args) {
         Log.printLine("Starting A2C Scheduler...");
 
@@ -91,7 +124,7 @@ public class A2C_Scheduler {
             for (int i = 0; i < Constants.NO_OF_DATA_CENTERS; i++) {
                 datacenter[i] = DatacenterCreator.createDatacenter("Datacenter_" + i);
             }
-            A2CDataCenterBroker broker = new A2CDataCenterBroker("Broker");
+            A2CDataCenterBroker broker = createBroker("Broker");
 
             cloudletList = createCloudlet(broker.getId(), Constants.NO_OF_TASKS, 0);
             vmList = createVM(broker.getId(), Constants.NO_OF_DATA_CENTERS);
@@ -112,6 +145,21 @@ public class A2C_Scheduler {
         }
     }
 
+
+    /*
+      Function Name:
+         createBroker
+      Functionality:
+         create DataCenter Broker related to this scheduler
+      input(s):
+         String name: name of the broker (arbitrary; it is not important that much)
+      output(s):
+         A2CDataCenterBroker: a datacenter broker object
+     */
+    private static A2CDataCenterBroker createBroker(String name) throws Exception {
+        return new A2CDataCenterBroker(name);
+    }
+
     public static List<Cloudlet> getList() {
         return A2C_Scheduler.resultList;
     }
@@ -123,37 +171,5 @@ public class A2C_Scheduler {
     public static double[][] getCommMatrix() {
         return A2C_Scheduler.commMatrix;
     }
-
-//    private static void printCloudletList(List<Cloudlet> list) {
-//        int size = list.size();
-//        Cloudlet cloudlet;
-//
-//        String indent = "    ";
-//        Log.printLine();
-////        Log.printLine(size);
-//        Log.printLine("========== OUTPUT ==========");
-//        Log.printLine("Cloudlet ID" + indent + "STATUS" + indent +
-//                "Data center ID" + indent + "VM ID" + indent + "Time" + indent + "Start Time" + indent + "Finish Time");
-//
-//        DecimalFormat dft = new DecimalFormat("###.##");
-//
-//        for (int i = 0; i < size; i++) {
-//            cloudlet = list.get(i);
-//            Log.print(indent + cloudlet.getCloudletId() + indent + indent);
-//
-//            if (cloudlet.getStatus() == Cloudlet.SUCCESS) {
-//                Log.print("SUCCESS");
-//
-//                Log.printLine(indent + indent + cloudlet.getResourceId() + indent + indent + indent + cloudlet.getVmId() +
-//                        indent + indent + dft.format(cloudlet.getActualCPUTime()) + indent + indent + dft.format(cloudlet.getExecStartTime()) +
-//                        indent + indent + indent + dft.format(cloudlet.getFinishTime()));
-//            }
-//            else {
-//                Log.print("Failure");
-//            }
-//        }
-//    }
-
-
 }
 
