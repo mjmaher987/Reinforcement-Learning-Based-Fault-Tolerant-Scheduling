@@ -17,6 +17,9 @@ import java.util.ArrayList;
  */
 public class FCFSDatacenterBroker extends DatacenterBroker {
 
+    /*
+      Constructor of the class
+    */
     public FCFSDatacenterBroker(String name) throws Exception {
         super(name);
     }
@@ -33,6 +36,17 @@ public class FCFSDatacenterBroker extends DatacenterBroker {
         setCloudletReceivedList(clist);
     }
 
+
+    /*
+     Function Name:
+        processCloudletReturn
+     Functionality:
+        Submit the cloudlet for execution on the selected VM
+     input(s):
+        SimEvent ev:
+     output(s): these are our events (note that they are our tasks)
+        void:it does not have output, rather it has to submit cloudlets (tasks)
+    */
     @Override
     protected void processCloudletReturn(SimEvent ev) {
         Cloudlet cloudlet = (Cloudlet) ev.getData();

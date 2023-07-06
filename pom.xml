@@ -13,11 +13,36 @@
             <artifactId>opencsv</artifactId>
             <version>4.1</version>
         </dependency>
+
+
+<!--        <dependency>-->
+<!--            <groupId>org.tensorflow</groupId>-->
+<!--            <artifactId>tensorflow</artifactId>-->
+<!--            <version>2.6.0</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.tensorflow</groupId>-->
+<!--            <artifactId>libtensorflow</artifactId>-->
+<!--            <version>2.6.0</version>-->
+<!--            <classifier>windows-x86_64</classifier>-->
+<!--        </dependency>-->
+
+
     </dependencies>
+
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>tensorflow</id>-->
+<!--            <name>TensorFlow Maven Repository</name>-->
+<!--            <url>https://storage.googleapis.com/tensorflow/maven</url>-->
+<!--        </repository>-->
+<!--    </repositories>-->
 
     <properties>
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
     </properties>
+
+
     
 </project>

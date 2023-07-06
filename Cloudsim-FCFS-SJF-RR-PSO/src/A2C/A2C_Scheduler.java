@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 
+
+
 // Implementing A2C Scheduler: Advantage Actor-Critic
 // Author: Mohammad Javad Maheronnaghsh
 // CloudSim and IFogSim
@@ -157,7 +159,7 @@ public class A2C_Scheduler {
          A2CDataCenterBroker: a datacenter broker object
      */
     private static A2CDataCenterBroker createBroker(String name) throws Exception {
-        return new A2CDataCenterBroker(name);
+        return new A2CDataCenterBroker(name, 0.1, 0.1, 0.1);
     }
 
     public static List<Cloudlet> getList() {

@@ -11,6 +11,9 @@ import java.util.List;
 
 public class SJFDatacenterBroker extends DatacenterBroker {
 
+    /*
+      Constructor of the class
+    */
     public SJFDatacenterBroker(String name) throws Exception {
         super(name);
     }
@@ -60,29 +63,22 @@ public class SJFDatacenterBroker extends DatacenterBroker {
         for (int i = 0; i < list2.length; i++) {
             list3.add(list2[i]);
         }
-        //printNumbers(list);
 
         setCloudletReceivedList(list);
-
-        //System.out.println("\n\tSJFS Broker Schedules\n");
-        //System.out.println("\n");
     }
 
-    public void printNumber(Cloudlet[] list) {
-        for (int i = 0; i < list.length; i++) {
-            System.out.print(" " + list[i].getCloudletId());
-            System.out.println(list[i].getCloudletStatusString());
-        }
-        System.out.println();
-    }
 
-    public void printNumbers(ArrayList<Cloudlet> list) {
-        for (int i = 0; i < list.size(); i++) {
-            System.out.print(" " + list.get(i).getCloudletId());
-        }
-        System.out.println();
-    }
 
+    /*
+     Function Name:
+        processCloudletReturn
+     Functionality:
+        Submit the cloudlet for execution on the selected VM
+     input(s):
+        SimEvent ev:
+     output(s): these are our events (note that they are our tasks)
+        void:it does not have output, rather it has to submit cloudlets (tasks)
+    */
     @Override
     protected void processCloudletReturn(SimEvent ev) {
         Cloudlet cloudlet = (Cloudlet) ev.getData();

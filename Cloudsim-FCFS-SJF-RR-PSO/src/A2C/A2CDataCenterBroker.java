@@ -1,285 +1,259 @@
 package A2C;
 
-import org.cloudbus.cloudsim.*;
-//import org.cloudbus.cloudsim.brokers.DatacenterBroker;
+import org.cloudbus.cloudsim.Cloudlet;
+import org.cloudbus.cloudsim.DatacenterBroker;
+import org.cloudbus.cloudsim.Log;
+import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
-import org.cloudbus.cloudsim.core.SimEvent;
 import org.cloudbus.cloudsim.core.CloudSimTags;
+import org.cloudbus.cloudsim.core.SimEvent;
+import utils.Constants;
 
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-
-// Author: Mohammad Javad Maheronnaghsh
-// CloudSim and IFogSim
-// Setup Java SDK version 16
-// Last Update: July 1st
-// Associated with Sharif University of Technology
-// Professors: Dr. Mohsen Anasari, Dr.Sepideh Safari
-// Supervisors: Abolfazl Younesi, Elyas Oustad
-
+import java.util.*;
 
 public class A2CDataCenterBroker extends DatacenterBroker {
 
-    public A2CDataCenterBroker(String name) throws Exception {
+    // Class attributes
+    private List<Vm> vmList;
+    // Note: Actor and Critic Model can be changed For example, they can be replaced by neural networks
+    private Map<String, Double> actorModel;
+    private Map<String, Double> criticModel;
+    private double actorLearningRate;
+    private double criticLearningRate;
+    private double discountFactor;
+    private Random random;
+
+    /*
+      Constructor of the class
+    */
+    public A2CDataCenterBroker(String name, double actorLearningRate, double criticLearningRate, double discountFactor) throws Exception {
         super(name);
+        this.vmList = new ArrayList<>();
+        this.actorModel = new HashMap<>();
+        this.criticModel = new HashMap<>();
+        this.actorLearningRate = actorLearningRate;
+        this.criticLearningRate = criticLearningRate;
+        this.discountFactor = discountFactor;
+        this.random = new Random();
     }
 
-//    @Override
-//    protected void processCloudletReturn(SimEvent ev) {
-//        List<Cloudlet> finishedCloudlets = CloudSim.getCloudResourceList().get(0).getCloudletFinishedList();
-//
-//        for (Cloudlet cloudlet : finishedCloudlets) {
-//            int cloudletId = cloudlet.getCloudletId();
-//            int vmId = cloudlet.getVmId();
-//
-//            Vm vm = getVmList().stream().filter(v -> v.getId() == vmId).findFirst().orElse(null);
-//            if (vm != null) {
-//                double reward = calculateReward(cloudlet);
-//                double[] state = calculateState(vm, cloudlet);
-//
-//                // Update the actor and critic networks using the A2C algorithm
-//                updateNetworks(state, reward);
-//                // Your code for updating the networks goes here
-//
-//                // Select an action using the actor network
-//                int selectedVmId = selectAction(vm, state);
-//                // Your code for selecting an action goes here
-//
-//                // Assign the selected action to the cloudlet's VM
-//                cloudlet.setVmId(selectedVmId);
-//
-//                // Submit the cloudlet for execution on the assigned VM
-//                CloudSim.send(getVmsToDatacentersMap().get(vm.getId()), cloudlet.getCloudletId(), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
-//            }
-//        }
-//    }
-
+    /*
+     Function Name:
+        processCloudletReturn
+     Functionality:
+        Submit the cloudlet for execution on the selected VM
+     input(s):
+        SimEvent ev:
+     output(s):
+        void:it does not have output, rather it has to submit cloudlets (tasks)
+    */
     @Override
     protected void processCloudletReturn(SimEvent ev) {
         Cloudlet cloudlet = (Cloudlet) ev.getData();
         getCloudletReceivedList().add(cloudlet);
-        Log.printLine(CloudSim.clock() + ": " + getName() + ": Cloudlet " + cloudlet.getCloudletId()
-                + " received");
-        cloudletsSubmitted--;
-        int vmId = cloudlet.getVmId();
+        Log.printLine(CloudSim.clock() + ": " + getName() + ": Cloudlet " + cloudlet.getCloudletId() + " received");
+        cloudletsSubmitted++;
 
+        int vmId = cloudlet.getVmId();
         Vm vm = getVmList().stream().filter(v -> v.getId() == vmId).findFirst().orElse(null);
-        if (vm != null) {
+        // If the cloudlet (task) is executed, we should not enter it again)
+        if (vm != null && !cloudlet.isFinished()) {
             double reward = calculateReward(cloudlet);
             double[] state = calculateState(vm, cloudlet);
 
-            // Update the actor and critic networks using the A2C algorithm
-            updateNetworks(state, reward);
-            // Your code for updating the networks goes here
+            // Update the actor and critic models
+            updateModels(state, reward);
 
-            // Select an action using the actor network
+            // Select an action (using the actor model)
             int selectedVmId = selectAction(vm, state);
-            // Your code for selecting an action goes here
-
-            // Assign the selected action to the cloudlet's VM
             cloudlet.setVmId(selectedVmId);
-//            scheduleTaskstoVms();
-//            cloudletExecution(cloudlet);
 
-            // Submit the cloudlet for execution on the assigned VM
-//            CloudSim.send(getVmsToDatacentersMap().get(vm.getId()), cloudlet.getCloudletId(), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
+            // Submit the cloudlet for execution on the selected VM
             sendNow(getVmsToDatacentersMap().get(vm.getId()), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
         }
     }
 
-    public void scheduleTaskstoVms() {
-
-        ArrayList<Cloudlet> clist = new ArrayList<Cloudlet>();
-
-        for (Cloudlet cloudlet : getCloudletSubmittedList()) {
-            clist.add(cloudlet);
-        }
-
-        setCloudletReceivedList(clist);
-    }
 
 
+    /*
+     Function Name:
+        updateModels
+     Functionality:
+        Update the actor and critic models using the A2C algorithm
+     input(s):
+        double[] state: current state
+        double reward: reward taken from doing the specific actions
+     output(s):
+        void: it does not have output, rather it has to submit cloudlets (tasks)
+    */
+    private void updateModels(double[] state, double reward) {
 
-    private int selectAction(Vm vm, double[] state) {
-        // Select an action using the actor network
-        // Your code for selecting an action goes here
-//        int numActions = 4; // Get the number of available actions
-        double[] actionProbabilities = getActionProbabilities(state); // Get the action probabilities
-
-        // Select an action index based on the action probabilities
-        int selectedActionIndex = selectActionIndexBasedOnProbabilities(actionProbabilities);
-
-        // Map the selected action index to the corresponding VM ID
-//        List<Vm> vmList = getVmList();
-//        int selectedVmId = vmList.get(selectedActionIndex).getId();
-
-        return selectedActionIndex;
-    }
-
-    private void updateNetworks(double[] state, double reward) {
-        // Update the actor and critic networks using the A2C algorithm
-        // TODO: Implement the A2C network update algorithm
-
-        // 1. Calculate the target value for the critic network
-        double discountFactor = 0.5; // it can vary
-        double targetValue = reward + discountFactor * estimateNextStateValue(state);
-
-        // 2. Compute the advantage value
-        double advantage = targetValue - estimateStateValue(state);
-
-        // 3. Update the critic network weights
-        updateCriticWeights(state, targetValue);
-
-        // 4. Update the actor network weights
-        updateActorWeights(state, advantage);
-    }
-
-    private double estimateStateValue(double[] state) {
-        // Estimate the value of the current state using the critic network
-        // TODO: Implement the critic network to estimate the state value
-        double stateValue = 0.0; // Replace this with your actual implementation
-        return stateValue;
-    }
-
-    private double estimateNextStateValue(double[] state) {
-        // Estimate the value of the next state using the critic network
-        // TODO: Implement the critic network to estimate the state value
-        double nextStateValue = 0.0; // Replace this with your actual implementation
-        return nextStateValue;
-    }
-
-    private void updateCriticWeights(double[] state, double targetValue) {
-        // Update the weights of the critic network based on the advantage value and critic loss gradient
-        // TODO: Implement the critic network weight update algorithm
+        // 1. Estimate the value of the current state using the critic model
         double currentStateValue = estimateStateValue(state);
 
-        // Step 2: Calculate the critic loss gradient
-        double criticLossGradient = targetValue - currentStateValue;
+        // 2. Estimate the value of the next state using the critic model (assuming the next state is terminal)
+        double nextStateValue = 0.0;
 
-        // Step 3: Update the critic network weights based on the gradient
-//        updateWeights(state, criticLossGradient);
-        double learningRate = 0.1;
-        for (int i = 0; i < state.length; i++) {
-            state[i] += learningRate * criticLossGradient * state[i];
+        // Find the average value of the next possible states
+        for (int action = 0; action < Constants.NO_OF_DATA_CENTERS; action++) {
+            double[] currentState = new double[state.length];
+            System.arraycopy(state, 0, currentState, 0, state.length);
+            Vm selectedVm = getVmList().get(action);
+            currentState[action] = selectedVm.getCurrentRequestedTotalMips();
+            nextStateValue += estimateStateValue(currentState);
         }
+        nextStateValue /= Constants.NO_OF_DATA_CENTERS;
 
+        // 3. Compute the TD error
+        double tdError = reward + discountFactor * nextStateValue - currentStateValue;
+
+        // 4. Update the critic model
+        updateCriticModel(state, currentStateValue, tdError);
+
+        // 5. Update the actor model
+        updateActorModel(state, tdError);
     }
 
-    private void updateActorWeights(double[] state, double advantage) {
-        // Update the weights of the actor network based on the advantage value and actor loss gradient
-        // TODO: Implement the actor network weight update algorithm
-        double[] actionProbabilities = this.getActionProbabilities(state);
 
-        // Step 2: Calculate the actor loss gradient
-        double actorLossGradient = calculateActorLossGradient(state, actionProbabilities, advantage);
 
-        // Step 3: Update the actor network weights based on the gradient
-//        actorNetwork.updateWeights(state, actorLossGradient);
-        double learningRate = 0.1;
-        for (int i = 0; i < state.length; i++) {
-            state[i] += learningRate * actorLossGradient * state[i];
+    /*
+     Function Name:
+        estimateStateValue
+     Functionality:
+        Estimate the value of the current state using the critic model
+     input(s):
+        double[] state: input state
+     output(s):
+        double: estimated value of the input state
+    */
+    private double estimateStateValue(double[] state) {
+        StringBuilder stateKey = new StringBuilder();
+        for (double value : state) {
+            stateKey.append(value).append(":");
         }
-    }
-
-    private double[] getActionProbabilities(double[] state) {
-        // Here's a placeholder implementation that returns a uniform distribution
-        int numActions = 4; // Get the number of available actions
-        double[] actionProbabilities = new double[numActions];
-        double probability = 1.0 / numActions;
-        Arrays.fill(actionProbabilities, probability);
-
-        return actionProbabilities;
+        String key = stateKey.toString();
+        return criticModel.getOrDefault(key, 0.0);
     }
 
 
-    private double calculateActorLossGradient(double[] state, double[] actionProbabilities, double advantage) {
-        // Calculate the actor loss gradient based on the state, action probabilities, and advantage
-        // TODO: Implement the actor loss gradient calculation
 
-        // Here's an example implementation using the REINFORCE algorithm
+    /*
+     Function Name:
+        updateCriticModel
+     Functionality:
+        Update the critic model based on the TD error
+     input(s):
+        double[] state: input state
+        double currentStateValue: value of the input state
+        double tdError: the td-error which we are going to update the critic model based on ti
+     output(s):
+        void: it doesn't update anything, rather it updates the critical model
+    */
+    private void updateCriticModel(double[] state, double currentStateValue, double tdError) {
+        StringBuilder stateKey = new StringBuilder();
+        for (double value : state) {
+            stateKey.append(value).append(":");
+        }
+        String key = stateKey.toString();
 
-        // Get the action index corresponding to the selected action
-        int selectedActionIndex = selectActionIndexBasedOnProbabilities(actionProbabilities);
-
-        // Calculate the actor loss gradient for the selected action
-        double actorLossGradient = advantage * (-1.0 / actionProbabilities[selectedActionIndex]);
-
-        return actorLossGradient;
+        double updatedValue = currentStateValue + criticLearningRate * tdError;
+        criticModel.put(key, updatedValue);
     }
 
-    private int selectActionIndexBasedOnProbabilities(double[] actionProbabilities) {
-        // Select an action index based on the action probabilities
-        // TODO: Implement a suitable method to select an action index based on the probabilities
 
-        // Here's an example implementation using a simple random selection method
+    /*
+     Function Name:
+        updateActorModel
+     Functionality:
+        Update the actor model based on the TD error
+     input(s):
+        double[] state: input state
+        double tdError: the td-error which we are going to update the critic model based on ti
+     output(s):
+        void: it doesn't update anything, rather it updates the actor model
+    */
+    private void updateActorModel(double[] state, double tdError) {
+        StringBuilder stateKey = new StringBuilder();
+        for (double value : state) {
+            stateKey.append(value).append(":");
+        }
+        String key = stateKey.toString();
 
-        double randomValue = Math.random();
-        double cumulativeProbability = 0.0;
+        double actionProbability = actorModel.getOrDefault(key, 0.0);
+        double updatedProbability = actionProbability + actorLearningRate * tdError;
+        actorModel.put(key, updatedProbability);
+    }
 
-        for (int i = 0; i < actionProbabilities.length; i++) {
-            cumulativeProbability += actionProbabilities[i];
 
-            if (randomValue <= cumulativeProbability) {
-                return i;
+    /*
+     Function Name:
+        selectAction
+     Functionality:
+        Select an action using the actor model
+     input(s):
+        Vm vm: the current virtual machine
+        double[] state: input state
+     output(s):
+        int: the action that should be taken
+    */
+    private int selectAction(Vm vm, double[] state) {
+        StringBuilder stateKey = new StringBuilder();
+        for (double value : state) {
+            stateKey.append(value).append(":");
+        }
+        String key = stateKey.toString();
+
+        double actionProbability = actorModel.getOrDefault(key, 0.0);
+        double randomValue = random.nextDouble();
+
+        if (randomValue <= actionProbability) {
+            return vm.getId();
+        } else {
+            List<Vm> otherVms = new ArrayList<>(vmList);
+            otherVms.remove(vm);
+            if (otherVms.isEmpty()) {
+                return vm.getId();
+            } else {
+                int randomIndex = random.nextInt(otherVms.size());
+                return otherVms.get(randomIndex).getId();
             }
         }
-
-        // If no action is selected, return the index of the last action
-        return actionProbabilities.length - 1;
     }
 
 
-//    private double calculateReward(Cloudlet cloudlet) {
-//        // Calculate the reward for the given cloudlet based on its completion time, cost, etc.
-//        double completionTime = cloudlet.getActualCpuTime(); // Get the completion time of the cloudlet
-//        double cost = cloudlet.getCostPerSec() * completionTime; // Calculate the cost based on the completion time and cost per second
-//        // Your code for calculating the reward goes here
-//        // You can incorporate additional factors such as quality of service, penalty for delay, etc.
-//
-//        double reward = 0.0; // Replace this with your actual implementation
-//        return reward;
-//    }
+    /*
+     Function Name:
+        calculateReward
+     Functionality:
+        Calculate the reward for the given cloudlet
+     input(s):
+        Cloudlet cloudlet: input task
+     output(s):
+        double: reward of the cloudlet
+    */
     private double calculateReward(Cloudlet cloudlet) {
-        long length = cloudlet.getCloudletLength(); // Get the length of the cloudlet
-        double executionTime = cloudlet.getFinishTime() - cloudlet.getExecStartTime(); // Calculate the execution time
-
-        // Your code for calculating the reward goes here
-        // You can incorporate additional factors such as quality of service, penalty for delay, etc.
-
-        double reward = length / executionTime; // Example calculation: Reward is proportional to the cloudlet's length-to-execution-time ratio
-        return reward;
+        double executionTime = cloudlet.getFinishTime() - cloudlet.getExecStartTime();
+        return 1.0 / executionTime; // Reward is inversely proportional to the execution time // It can vary
     }
 
+
+    /*
+     Function Name:
+        calculateState
+     Functionality:
+        Calculate the state representation based on the VM and cloudlet
+     input(s):
+        Cloudlet cloudlet: input task
+     output(s):
+        double[] state: it is the calculated state
+    */
     private double[] calculateState(Vm vm, Cloudlet cloudlet) {
-        // Define the number of features for the state representation
-        int numFeatures = 4;
-
-        // Create an array to store the state values
-        double[] state = new double[numFeatures];
-
-        // Feature 1: VM's MIPS (Million Instructions Per Second) capacity
-        double vmMips = vm.getMips(); // Get the VM's MIPS capacity
-        state[0] = vmMips;
-
-        // Feature 2: Cloudlet's length (in MI)
-        long cloudletLength = cloudlet.getCloudletLength(); // Get the cloudlet's length
-        state[1] = cloudletLength;
-
-        // Feature 3: VM's current CPU utilization
-        double vmUtilization = vm.getTotalUtilizationOfCpu(CloudSim.clock()); // Get the VM's current CPU utilization
-        state[2] = vmUtilization;
-
-        // Feature 4: Cloudlet's remaining length (in MI)
-        long executedLength = cloudlet.getCloudletFinishedSoFar(); // Get the executed length of the cloudlet
-        long remainingLength = cloudletLength - executedLength; // Calculate the remaining length
-        state[3] = remainingLength;
-
-        // You can add more features based on your requirements
-
+        // assume the state is a vector containing (VM's MIPS) and (cloudlet's length) and (file size)
+        // It has 3 features (It can have more or less features)
+        double[] state = new double[3];
+        state[0] = vm.getMips();
+        state[1] = cloudlet.getCloudletLength();
+        state[2] = cloudlet.getCloudletFileSize();
         return state;
     }
-
 }
