@@ -28,8 +28,6 @@ public class SJFDatacenterBroker extends DatacenterBroker {
             System.out.println("Task" + cloudletList.get(i).getCloudletId() + " is bound with VM" + vmList.get(i % reqVms).getId());
         }
 
-        //System.out.println("reqTasks: "+ reqTasks);
-
         ArrayList<Cloudlet> list = new ArrayList<Cloudlet>();
         for (Cloudlet cloudlet : getCloudletReceivedList()) {
             list.add(cloudlet);
@@ -39,8 +37,6 @@ public class SJFDatacenterBroker extends DatacenterBroker {
 
         Cloudlet[] list2 = list.toArray(new Cloudlet[list.size()]);
 
-        //System.out.println("size :"+list.size());
-
         Cloudlet temp = null;
 
         int n = list.size();
@@ -49,12 +45,10 @@ public class SJFDatacenterBroker extends DatacenterBroker {
             for (int j = 1; j < (n - i); j++) {
                 if (list2[j - 1].getCloudletLength() / (vm.getMips() * vm.getNumberOfPes()) > list2[j].getCloudletLength() / (vm.getMips() * vm.getNumberOfPes())) {
                     //swap the elements!
-                    //swap(list2[j-1], list2[j]);
                     temp = list2[j - 1];
                     list2[j - 1] = list2[j];
                     list2[j] = temp;
                 }
-                // printNumbers(list2);
             }
         }
 
@@ -76,7 +70,7 @@ public class SJFDatacenterBroker extends DatacenterBroker {
         Submit the cloudlet for execution on the selected VM
      input(s):
         SimEvent ev:
-     output(s): these are our events (note that they are our tasks)
+     output(s):
         void:it does not have output, rather it has to submit cloudlets (tasks)
     */
     @Override

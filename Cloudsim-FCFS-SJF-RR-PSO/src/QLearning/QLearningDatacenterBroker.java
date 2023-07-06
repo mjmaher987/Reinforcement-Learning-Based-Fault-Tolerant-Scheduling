@@ -160,7 +160,7 @@ class QLearningDatacenterBroker extends DatacenterBroker {
         Submit the cloudlet for execution on the selected VM
      input(s):
         SimEvent ev:
-     output(s): these are our events (note that they are our tasks)
+     output(s):
         void:it does not have output, rather it has to submit cloudlets (tasks)
     */
     @Override
