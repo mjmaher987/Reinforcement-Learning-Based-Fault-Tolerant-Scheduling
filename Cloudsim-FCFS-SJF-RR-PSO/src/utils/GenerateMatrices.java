@@ -5,10 +5,21 @@ import java.io.*;
 
 public class GenerateMatrices {
     private static double[][] commMatrix, execMatrix;
-    private File commFile = new File("Matrices/CommunicationTimeMatrix.txt");
-    private File execFile = new File("Matrices/ExecutionTimeMatrix.txt");
+    private File commFile;
+    private File execFile;
+
+
 
     public GenerateMatrices() {
+
+        File directory = new File("Matrices/".concat(String.valueOf(Constants.NO_OF_DATA_CENTERS)).concat("_").concat(String.valueOf(Constants.NO_OF_TASKS)));
+        directory.mkdirs();
+        commFile = new File("Matrices/".concat(String.valueOf(Constants.NO_OF_DATA_CENTERS)).concat("_").concat(String.valueOf(Constants.NO_OF_TASKS)).concat("/CommunicationTimeMatrix.txt"));
+        execFile = new File("Matrices/".concat(String.valueOf(Constants.NO_OF_DATA_CENTERS)).concat("_").concat(String.valueOf(Constants.NO_OF_TASKS)).concat("/ExecutionTimeMatrix.txt"));
+
+
+
+
         commMatrix = new double[Constants.NO_OF_TASKS][Constants.NO_OF_DATA_CENTERS];
         execMatrix = new double[Constants.NO_OF_TASKS][Constants.NO_OF_DATA_CENTERS];
         try {

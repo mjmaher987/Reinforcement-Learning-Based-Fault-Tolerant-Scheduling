@@ -26,7 +26,6 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        // Running schedulers separately
         int[] tasks = {10, 20, 30, 40, 50, 200, 400, 600, 800, 1000};
         int[] datacenters = {2, 5, 8, 10, 50, 100, 150, 200};
 
@@ -37,16 +36,10 @@ public class Main {
             Constants.NO_OF_TASKS = task;
             for (int datacenter : datacenters) {
                 Constants.NO_OF_DATA_CENTERS = datacenter;
+                do_everything(args);
             }
-            do_everything(args);
-
 
         }
-
-        // Set the number of tasks and number of datacenters arbitrarily
-//        Constants.NO_OF_TASKS = tasks[5];
-//        Constants.NO_OF_DATA_CENTERS = datacenters[2];
-//        do_everything(args);
 
 
     }
