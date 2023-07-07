@@ -111,7 +111,7 @@ public class A2C_Scheduler {
     public static void main(String[] args) {
         Log.printLine("Starting A2C Scheduler...");
 
-        new GenerateMatrices();
+
         execMatrix = GenerateMatrices.getExecMatrix();
         commMatrix = GenerateMatrices.getCommMatrix();
 

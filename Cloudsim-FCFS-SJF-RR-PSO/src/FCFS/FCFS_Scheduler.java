@@ -113,7 +113,7 @@ public class FCFS_Scheduler {
     public static List<Cloudlet> main(String[] args) {
         Log.printLine("Starting FCFS Scheduler...");
 
-        new GenerateMatrices();
+
         execMatrix = GenerateMatrices.getExecMatrix();
         commMatrix = GenerateMatrices.getCommMatrix();
 

@@ -7,6 +7,7 @@ import SJF.SJF_Scheduler;
 import com.opencsv.CSVWriter;
 import org.cloudbus.cloudsim.Cloudlet;
 import utils.Constants;
+import utils.GenerateMatrices;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -68,6 +69,9 @@ public class Main {
 
         File directory = new File(hyperparameters);
         directory.mkdirs();
+
+        new GenerateMatrices();
+
         // Execute the FCFS Scheduler
         FCFS_Scheduler.main(args);
         save_outputs(FCFS_Scheduler.getList(), FCFS_Scheduler.getExecMatrix(), FCFS_Scheduler.getCommMatrix(), hyperparameters.concat("/fcfs_data.csv"));

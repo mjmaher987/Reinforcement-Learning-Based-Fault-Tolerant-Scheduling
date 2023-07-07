@@ -114,7 +114,7 @@ public class SJF_Scheduler {
     public static void main(String[] args) {
         Log.printLine("Starting SJF Scheduler...");
 
-        new GenerateMatrices();
+
         execMatrix = GenerateMatrices.getExecMatrix();
         commMatrix = GenerateMatrices.getCommMatrix();
 

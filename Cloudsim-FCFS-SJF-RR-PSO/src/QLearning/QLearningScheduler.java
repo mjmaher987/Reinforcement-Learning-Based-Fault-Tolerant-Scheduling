@@ -116,7 +116,6 @@ public class QLearningScheduler {
     public static void main(String[] args) {
         Log.printLine("Starting Q-Learning Scheduler...");
 
-        new GenerateMatrices();
         execMatrix = GenerateMatrices.getExecMatrix();
         commMatrix = GenerateMatrices.getCommMatrix();
 

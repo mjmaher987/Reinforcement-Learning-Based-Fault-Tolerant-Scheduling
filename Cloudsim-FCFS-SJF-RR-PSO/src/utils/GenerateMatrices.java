@@ -46,33 +46,6 @@ public class GenerateMatrices {
         execBufferedWriter.close();
     }
 
-    private void readCostMatrix() throws IOException {
-        System.out.println("Reading the Matrices...");
-        BufferedReader commBufferedReader = new BufferedReader(new FileReader(commFile));
-
-        int i = 0, j = 0;
-        do {
-            String line = commBufferedReader.readLine();
-            for (String num : line.split(" ")) {
-                commMatrix[i][j++] = new Double(num);
-            }
-            ++i;
-            j = 0;
-        } while (commBufferedReader.ready());
-
-
-        BufferedReader execBufferedReader = new BufferedReader(new FileReader(execFile));
-
-        i = j = 0;
-        do {
-            String line = execBufferedReader.readLine();
-            for (String num : line.split(" ")) {
-                execMatrix[i][j++] = new Double(num);
-            }
-            ++i;
-            j = 0;
-        } while (execBufferedReader.ready());
-    }
 
     public static double[][] getCommMatrix() {
         return commMatrix;
