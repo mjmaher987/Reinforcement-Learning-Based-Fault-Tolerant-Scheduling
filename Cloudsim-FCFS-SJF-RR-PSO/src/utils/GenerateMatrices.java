@@ -5,13 +5,14 @@ import java.io.*;
 
 public class GenerateMatrices {
     private static double[][] commMatrix, execMatrix;
-    private File commFile;
-    private File execFile;
+    private final File commFile;
+    private final File execFile;
 
 
 
     public GenerateMatrices() {
 
+        // We have to create a file corresponding to the hyperparameters
         File directory = new File("Matrices/".concat(String.valueOf(Constants.NO_OF_DATA_CENTERS)).concat("_").concat(String.valueOf(Constants.NO_OF_TASKS)));
         directory.mkdirs();
         commFile = new File("Matrices/".concat(String.valueOf(Constants.NO_OF_DATA_CENTERS)).concat("_").concat(String.valueOf(Constants.NO_OF_TASKS)).concat("/CommunicationTimeMatrix.txt"));
@@ -27,15 +28,6 @@ public class GenerateMatrices {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        try {
-//            if (commFile.exists() && execFile.exists()) {
-//                readCostMatrix();
-//            } else {
-//                initCostMatrix();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
     private void initCostMatrix() throws IOException {
