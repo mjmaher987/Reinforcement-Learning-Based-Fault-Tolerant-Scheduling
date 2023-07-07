@@ -24,27 +24,28 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        // Running 4 schedulers separately
+        // Running schedulers separately
         int[] tasks = {10, 20, 30, 40, 50, 200, 400, 600, 800, 1000};
         int[] datacenters = {2, 5, 8, 10, 50, 100, 150, 200};
 
         // Iterate over all possible number of task_n and datacenter_n
-//        for (int i = 0; i < 10; i++) {
-//            do_everything(args);
-//
-//            Constants.NO_OF_TASKS = tasks[i];
-//            for (int j = 0; j < 8; j++) {
-//                Constants.NO_OF_DATA_CENTERS = datacenters[j];
-//            }
-//
-//
-//        }
+        for (int task : tasks) {
+            do_everything(args);
 
-        // Set the number of tasks and number of datacenters arbitrarily
-        Constants.NO_OF_TASKS = tasks[5];
-        Constants.NO_OF_DATA_CENTERS = datacenters[2];
+            Constants.NO_OF_TASKS = task;
+            for (int datacenter : datacenters) {
+                Constants.NO_OF_DATA_CENTERS = datacenter;
+            }
+            do_everything(args);
 
-        do_everything(args);
+
+        }
+
+//        // Set the number of tasks and number of datacenters arbitrarily
+//        Constants.NO_OF_TASKS = tasks[5];
+//        Constants.NO_OF_DATA_CENTERS = datacenters[2];
+
+
     }
 
 
