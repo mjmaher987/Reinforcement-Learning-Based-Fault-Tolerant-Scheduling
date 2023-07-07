@@ -5,21 +5,26 @@ import java.io.*;
 
 public class GenerateMatrices {
     private static double[][] commMatrix, execMatrix;
-    private File commFile = new File("CommunicationTimeMatrix.txt");
-    private File execFile = new File("ExecutionTimeMatrix.txt");
+    private File commFile = new File("Matrices/CommunicationTimeMatrix.txt");
+    private File execFile = new File("Matrices/ExecutionTimeMatrix.txt");
 
     public GenerateMatrices() {
         commMatrix = new double[Constants.NO_OF_TASKS][Constants.NO_OF_DATA_CENTERS];
         execMatrix = new double[Constants.NO_OF_TASKS][Constants.NO_OF_DATA_CENTERS];
         try {
-            if (commFile.exists() && execFile.exists()) {
-                readCostMatrix();
-            } else {
-                initCostMatrix();
-            }
+            initCostMatrix();
         } catch (IOException e) {
             e.printStackTrace();
         }
+//        try {
+//            if (commFile.exists() && execFile.exists()) {
+//                readCostMatrix();
+//            } else {
+//                initCostMatrix();
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void initCostMatrix() throws IOException {

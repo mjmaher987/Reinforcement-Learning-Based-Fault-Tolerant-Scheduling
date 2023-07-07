@@ -8,6 +8,7 @@ import com.opencsv.CSVWriter;
 import org.cloudbus.cloudsim.Cloudlet;
 import utils.Constants;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -41,9 +42,10 @@ public class Main {
 
         }
 
-//        // Set the number of tasks and number of datacenters arbitrarily
+        // Set the number of tasks and number of datacenters arbitrarily
 //        Constants.NO_OF_TASKS = tasks[5];
 //        Constants.NO_OF_DATA_CENTERS = datacenters[2];
+//        do_everything(args);
 
 
     }
@@ -61,21 +63,26 @@ public class Main {
             to .csv files and also prints the log data
     */
     private static void do_everything(String[] args) {
+        String hyperparameters = "data/".concat(String.valueOf(Constants.NO_OF_DATA_CENTERS))
+                .concat("_").concat(String.valueOf(Constants.NO_OF_TASKS));
+
+        File directory = new File(hyperparameters);
+        directory.mkdirs();
         // Execute the FCFS Scheduler
         FCFS_Scheduler.main(args);
-        save_outputs(FCFS_Scheduler.getList(), FCFS_Scheduler.getExecMatrix(), FCFS_Scheduler.getCommMatrix(), "data/fcfs_data.csv");
+        save_outputs(FCFS_Scheduler.getList(), FCFS_Scheduler.getExecMatrix(), FCFS_Scheduler.getCommMatrix(), hyperparameters.concat("/fcfs_data.csv"));
 
         // Execute the SJF Scheduler
         SJF_Scheduler.main(args);
-        save_outputs(SJF_Scheduler.getList(), SJF_Scheduler.getExecMatrix(), SJF_Scheduler.getCommMatrix(), "data/sjf_data.csv");
+        save_outputs(SJF_Scheduler.getList(), SJF_Scheduler.getExecMatrix(), SJF_Scheduler.getCommMatrix(), hyperparameters.concat("/sjf_data.csv"));
 
         // Execute the A2C Scheduler
         A2C_Scheduler.main(args);
-        save_outputs(A2C_Scheduler.getList(), A2C_Scheduler.getExecMatrix(), A2C_Scheduler.getCommMatrix(), "data/a2c_data.csv");
+        save_outputs(A2C_Scheduler.getList(), A2C_Scheduler.getExecMatrix(), A2C_Scheduler.getCommMatrix(), hyperparameters.concat("/a2c_data.csv"));
 
         // Execute the Q-Learning Scheduler
         QLearningScheduler.main(args);
-        save_outputs(QLearningScheduler.getList(), QLearningScheduler.getExecMatrix(), QLearningScheduler.getCommMatrix(), "data/qlearning_data.csv");
+        save_outputs(QLearningScheduler.getList(), QLearningScheduler.getExecMatrix(), QLearningScheduler.getCommMatrix(), hyperparameters.concat("/qlearning_data.csv"));
 
     }
 
@@ -97,6 +104,7 @@ public class Main {
     public static void save_outputs(List<Cloudlet> list, double[][] execMatrix, double[][] commMatrix, String csvFilePath) {
         int size = list.size();
         Cloudlet cloudlet;
+
 
         // Create a CSV writer
         try (CSVWriter writer = new CSVWriter(new FileWriter(csvFilePath))) {
