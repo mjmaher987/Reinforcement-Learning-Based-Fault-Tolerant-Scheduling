@@ -1,6 +1,7 @@
 // import necessary packages
 
 import A2C.A2C_Scheduler;
+import DoubleQLearning.DoubleQLearningScheduler;
 import FCFS.FCFS_Scheduler;
 import QLearning.QLearningScheduler;
 import SJF.SJF_Scheduler;
@@ -19,15 +20,17 @@ import java.util.List;
 // Author: Mohammad Javad Maheronnaghsh
 // CloudSim and IFogSim
 // Setup Java SDK version 16
-// Last Update: July 1st
+// Last Update: July 7th
 // Associated with Sharif University of Technology
 // Professors: Dr. Mohsen Anasari, Dr.Sepideh Safari
 // Supervisors: Abolfazl Younesi, Elyas Oustad
 
 public class Main {
     public static void main(String[] args) {
-        int[] tasks = {10, 20, 30, 40, 50, 200, 400, 600, 800, 1000};
-        int[] datacenters = {2, 5, 8, 10, 50, 100, 150, 200};
+//        int[] tasks = {10, 20, 30, 40, 50, 200, 400, 600, 800, 1000};
+//        int[] datacenters = {2, 5, 8, 10, 50, 100, 150, 200};
+        int[] tasks = {200};
+        int[] datacenters = {20};
 
         // Iterate over all possible number of task_n and datacenter_n
         for (int task : tasks) {
@@ -80,6 +83,11 @@ public class Main {
         // Execute the Q-Learning Scheduler
         QLearningScheduler.main(args);
         save_outputs(QLearningScheduler.getList(), QLearningScheduler.getExecMatrix(), QLearningScheduler.getCommMatrix(), hyperparameters.concat("/qlearning_data.csv"));
+
+        // Execute the Double-Q-Learning Scheduler
+        DoubleQLearningScheduler.main(args);
+        save_outputs(DoubleQLearningScheduler.getList(), DoubleQLearningScheduler.getExecMatrix(), DoubleQLearningScheduler.getCommMatrix(), hyperparameters.concat("/double_qlearning_data.csv"));
+
 
     }
 
