@@ -114,7 +114,7 @@ public class Main {
         // Create a CSV writer
         try (CSVWriter writer = new CSVWriter(new FileWriter(csvFilePath))) {
             String[] header = {"Cloudlet ID", "Status", "Data center ID", "VM ID", "Time",
-                    "Start Time", "Finish Time", "Waiting", "Completion", "Cost"};
+                    "Start Time", "Finish Time", "Waiting", "Completion", "Cost", "CPU Utilization"};
             writer.writeNext(header);
 
             DecimalFormat dft = new DecimalFormat("####.##");
@@ -137,9 +137,11 @@ public class Main {
                 String waitingTime = dft.format(cloudlet.getWaitingTime());
                 String completionTime = dft.format(cloudlet.getActualCPUTime() + cloudlet.getWaitingTime());
                 String cost = dft.format(cloudlet.getCostPerSec() * cloudlet.getActualCPUTime());
+                int dcId = cloudlet.getVmId() % Constants.NO_OF_DATA_CENTERS;
+                String cpuUtilization = dft.format(cloudlet.getActualCPUTime() / execMatrix[i][dcId]);
 
                 String[] row = {cloudletId, status, dataCenterId, vmId, time, startTime, finishTime, waitingTime,
-                        completionTime, cost};
+                        completionTime, cost, cpuUtilization};
                 writer.writeNext(row);
 
                 if (cloudlet.getCloudletStatus() == Cloudlet.SUCCESS) {
@@ -168,6 +170,9 @@ public class Main {
             double avgWaitingTime = totalWaitingTime / size;
             String[] waitingTimeRow = {"Avg Waiting Time:", String.valueOf(avgWaitingTime)};
             writer.writeNext(waitingTimeRow);
+
+
+
 
             System.out.println("Data saved to " + csvFilePath);
         } catch (IOException e) {
