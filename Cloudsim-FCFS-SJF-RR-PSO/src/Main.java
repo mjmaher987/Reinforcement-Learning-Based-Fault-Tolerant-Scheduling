@@ -27,10 +27,10 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-//        int[] tasks = {10, 20, 30, 40, 50, 200, 400, 600, 800, 1000};
-//        int[] datacenters = {2, 5, 8, 10, 50, 100, 150, 200};
-        int[] tasks = {200};
-        int[] datacenters = {20};
+        int[] tasks = {10, 20, 30, 40, 50, 200, 400, 600, 800, 1000};
+        int[] datacenters = {2, 5, 8, 10, 50, 100, 150, 200};
+//        int[] tasks = {200};
+//        int[] datacenters = {20};
 
         // Iterate over all possible number of task_n and datacenter_n
         for (int task : tasks) {
