@@ -25,6 +25,7 @@ import java.util.List;
 // Professors: Dr. Mohsen Anasari, Dr.Sepideh Safari
 // Supervisors: Abolfazl Younesi, Elyas Oustad
 
+
 public class Main {
     public static void main(String[] args) {
         int[] tasks = {10, 20, 30, 40, 50, 200, 400, 600, 800, 1000};
@@ -43,6 +44,8 @@ public class Main {
             }
 
         }
+
+        System.out.println(TargetEntry.getAllTargetEntries().size());
 
 
     }
@@ -172,6 +175,17 @@ public class Main {
             writer.writeNext(waitingTimeRow);
 
 
+            if (csvFilePath.startsWith("/fcfs")) {
+                new TargetEntry("fcfs", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime);
+            } else if (csvFilePath.startsWith("/sjf")) {
+                new TargetEntry("sjf", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime);
+            } else if (csvFilePath.startsWith("/a2c")) {
+                new TargetEntry("a2c", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime);
+            } else if (csvFilePath.startsWith("/qlearning")) {
+                new TargetEntry("qlearning", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime);
+            } else if (csvFilePath.startsWith("/double")) {
+                new TargetEntry("double", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime);
+            }
 
 
             System.out.println("Data saved to " + csvFilePath);
