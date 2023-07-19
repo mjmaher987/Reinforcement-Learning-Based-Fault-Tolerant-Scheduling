@@ -44,4 +44,8 @@ public record TargetEntry(String type, int vmNumber, int cloudletNumber, double 
     public static List<TargetEntry> getAllTargetEntries() {
         return TargetEntry.allTargetEntries;
     }
+
+    public String getType(){
+        return type;
+    }
 }

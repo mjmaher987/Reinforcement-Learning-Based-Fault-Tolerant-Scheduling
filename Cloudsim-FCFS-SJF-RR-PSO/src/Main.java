@@ -7,6 +7,9 @@ import QLearning.QLearningScheduler;
 import SJF.SJF_Scheduler;
 import com.opencsv.CSVWriter;
 import org.cloudbus.cloudsim.Cloudlet;
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.CategoryChart;
+import org.knowm.xchart.CategoryChartBuilder;
 import utils.Constants;
 import utils.GenerateMatrices;
 
@@ -14,6 +17,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -28,23 +32,116 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        int[] tasks = {10, 20, 30, 40, 50, 200, 400, 600, 800, 1000};
-        int[] datacenters = {2, 5, 8, 10, 50, 100, 150, 200};
+        double[] tasks = {10, 20, 30, 40, 50, 200, 400, 600, 800, 1000};
+        double[] datacenters = {2, 5, 8, 10, 50, 100, 150, 200};
 
         // Iterate over all possible number of task_n and datacenter_n
-        for (int task : tasks) {
+        for (double task : tasks) {
 
-            Constants.NO_OF_TASKS = task;
-            for (int datacenter : datacenters) {
-                Constants.NO_OF_DATA_CENTERS = datacenter;
+            Constants.NO_OF_TASKS = (int) task;
+            for (double datacenter : datacenters) {
+                Constants.NO_OF_DATA_CENTERS = (int) datacenter;
                 do_everything(args);
             }
 
         }
 
-        System.out.println(TargetEntry.getAllTargetEntries().size());
+
+        List<String> types = new ArrayList<>();
+        types.add("fcfs");
+        types.add("sjf");
+        types.add("a2c");
+        types.add("qlearning");
+        types.add("double");
 
 
+        // Save based on task number
+
+
+        for (double task : tasks) {
+            List<double[]> datacenterDataList_makespan = new ArrayList<>();
+            List<double[]> datacenterDataList_avg_completion = new ArrayList<>();
+            List<double[]> datacenterDataList_avg_cost = new ArrayList<>();
+            List<double[]> datacenterDataList_avg_wait = new ArrayList<>();
+            for (String type : types) {
+                double[] datacenter_makespan = new double[datacenters.length];
+                double[] datacenter_avg_completion = new double[datacenters.length];
+                double[] datacenter_avg_cost = new double[datacenters.length];
+                double[] datacenter_avg_wait = new double[datacenters.length];
+                int counter = 0;
+                for (double datacenter : datacenters) {
+
+                    TargetEntry e = find_proper_record(task, datacenter, type);
+
+                    assert e != null;
+                    datacenter_makespan[counter] = e.getMakespan();
+                    datacenter_avg_completion[counter] = e.getAvg_completion();
+                    datacenter_avg_cost[counter] = e.getAvg_cost();
+                    datacenter_avg_wait[counter] = e.getAvg_wait();
+
+
+                    counter += 1;
+
+
+                }
+                datacenterDataList_makespan.add(datacenter_makespan);
+                datacenterDataList_avg_completion.add(datacenter_avg_completion);
+                datacenterDataList_avg_cost.add(datacenter_avg_cost);
+                datacenterDataList_avg_wait.add(datacenter_avg_wait);
+            }
+
+
+            show_chart((int) task, "Makespan", datacenterDataList_makespan, types, datacenters);
+            show_chart((int) task, "Average Completion Time", datacenterDataList_avg_completion, types, datacenters);
+            show_chart((int) task, "Average Cost", datacenterDataList_avg_cost, types, datacenters);
+            show_chart((int) task, "Average Waiting Time", datacenterDataList_avg_wait, types, datacenters);
+
+
+        }
+
+    }
+
+    private static void show_chart(int task, String yAxis, List<double[]> datacenterDataList, List<String> types, double[] datacenters) {
+        CategoryChart chart = new CategoryChartBuilder()
+                .width(800)
+                .height(600)
+                .title("Task = ".concat(String.valueOf(task)))
+                .xAxisTitle("Datacenters")
+                .yAxisTitle(yAxis)
+                .build();
+
+        int cntr = 0;
+        for (double[] datacenterData : datacenterDataList) {
+            chart.addSeries(types.get(cntr), datacenters, datacenterData);
+            cntr += 1;
+        }
+
+
+//        // Display the chart in a JFrame
+//        JFrame frame = new JFrame(yAxis.concat(" Chart"));
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.add(new XChartPanel<>(chart));
+//        frame.pack();
+//        frame.setVisible(true);
+
+        String outputPath = "charts/"; // Replace with the desired output folder path
+        String outputFileName = String.valueOf(task).concat("-").concat(yAxis).concat(".png"); // Replace with the desired output file name
+
+        try {
+            BitmapEncoder.saveBitmap(chart, outputPath + outputFileName, BitmapEncoder.BitmapFormat.PNG);
+            System.out.println("Chart saved as: " + outputPath + outputFileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static TargetEntry find_proper_record(double task, double datacenter, String type) {
+        for (TargetEntry t : TargetEntry.getAllTargetEntries()) {
+            if (t.getCloudletNumber() == task && t.getVmNumber() == datacenter && t.getType().equals(type)) {
+                return t;
+            }
+        }
+        return null;
     }
 
 
@@ -218,3 +315,5 @@ public class Main {
         return makespan;
     }
 }
+
+
