@@ -91,17 +91,65 @@ public class Main {
             }
 
 
-            show_chart((int) task, "Makespan", datacenterDataList_makespan, types, datacenters);
-            show_chart((int) task, "Average Completion Time", datacenterDataList_avg_completion, types, datacenters);
-            show_chart((int) task, "Average Cost", datacenterDataList_avg_cost, types, datacenters);
-            show_chart((int) task, "Average Waiting Time", datacenterDataList_avg_wait, types, datacenters);
+            show_chart_1((int) task, "Makespan", datacenterDataList_makespan, types, datacenters);
+            show_chart_1((int) task, "Average Completion Time", datacenterDataList_avg_completion, types, datacenters);
+            show_chart_1((int) task, "Average Cost", datacenterDataList_avg_cost, types, datacenters);
+            show_chart_1((int) task, "Average Waiting Time", datacenterDataList_avg_wait, types, datacenters);
+
+
+        }
+
+
+
+
+
+
+        // Save another way
+
+        for (double datacenter : datacenters) {
+            List<double[]> taskDataList_makespan = new ArrayList<>();
+            List<double[]> taskDataList_avg_completion = new ArrayList<>();
+            List<double[]> taskDataList_avg_cost = new ArrayList<>();
+            List<double[]> taskDataList_avg_wait = new ArrayList<>();
+            for (String type : types) {
+                double[] task_makespan = new double[tasks.length];
+                double[] task_avg_completion = new double[tasks.length];
+                double[] task_avg_cost = new double[tasks.length];
+                double[] task_avg_wait = new double[tasks.length];
+                int counter = 0;
+                for (double task : tasks) {
+
+                    TargetEntry e = find_proper_record(task, datacenter, type);
+
+                    assert e != null;
+                    task_makespan[counter] = e.getMakespan();
+                    task_avg_completion[counter] = e.getAvg_completion();
+                    task_avg_cost[counter] = e.getAvg_cost();
+                    task_avg_wait[counter] = e.getAvg_wait();
+
+
+                    counter += 1;
+
+
+                }
+                taskDataList_makespan.add(task_makespan);
+                taskDataList_avg_completion.add(task_avg_completion);
+                taskDataList_avg_cost.add(task_avg_cost);
+                taskDataList_avg_wait.add(task_avg_wait);
+            }
+
+
+            show_chart_2((int) datacenter, "Makespan", taskDataList_makespan, types, tasks);
+            show_chart_2((int) datacenter, "Average Completion Time", taskDataList_avg_completion, types, tasks);
+            show_chart_2((int) datacenter, "Average Cost", taskDataList_avg_cost, types, tasks);
+            show_chart_2((int) datacenter, "Average Waiting Time", taskDataList_avg_wait, types, tasks);
 
 
         }
 
     }
 
-    private static void show_chart(int task, String yAxis, List<double[]> datacenterDataList, List<String> types, double[] datacenters) {
+    private static void show_chart_1(int task, String yAxis, List<double[]> datacenterDataList, List<String> types, double[] datacenters) {
         CategoryChart chart = new CategoryChartBuilder()
                 .width(800)
                 .height(600)
@@ -125,7 +173,41 @@ public class Main {
 //        frame.setVisible(true);
 
         String outputPath = "charts/"; // Replace with the desired output folder path
-        String outputFileName = String.valueOf(task).concat("-").concat(yAxis).concat(".png"); // Replace with the desired output file name
+        String outputFileName = "Tasks=".concat(String.valueOf(task)).concat("-").concat(yAxis).concat(".png"); // Replace with the desired output file name
+
+        try {
+            BitmapEncoder.saveBitmap(chart, outputPath + outputFileName, BitmapEncoder.BitmapFormat.PNG);
+            System.out.println("Chart saved as: " + outputPath + outputFileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void show_chart_2(int datacenter, String yAxis, List<double[]> taskDataList, List<String> types, double[] tasks) {
+        CategoryChart chart = new CategoryChartBuilder()
+                .width(800)
+                .height(600)
+                .title("Datacenter = ".concat(String.valueOf(datacenter)))
+                .xAxisTitle("Tasks")
+                .yAxisTitle(yAxis)
+                .build();
+
+        int cntr = 0;
+        for (double[] taskData : taskDataList) {
+            chart.addSeries(types.get(cntr), tasks, taskData);
+            cntr += 1;
+        }
+
+
+//        // Display the chart in a JFrame
+//        JFrame frame = new JFrame(yAxis.concat(" Chart"));
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.add(new XChartPanel<>(chart));
+//        frame.pack();
+//        frame.setVisible(true);
+
+        String outputPath = "charts/"; // Replace with the desired output folder path
+        String outputFileName = "Datacenters=".concat(String.valueOf(datacenter)).concat("-").concat(yAxis).concat(".png"); // Replace with the desired output file name
 
         try {
             BitmapEncoder.saveBitmap(chart, outputPath + outputFileName, BitmapEncoder.BitmapFormat.PNG);
