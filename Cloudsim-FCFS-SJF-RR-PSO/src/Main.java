@@ -30,12 +30,9 @@ public class Main {
     public static void main(String[] args) {
         int[] tasks = {10, 20, 30, 40, 50, 200, 400, 600, 800, 1000};
         int[] datacenters = {2, 5, 8, 10, 50, 100, 150, 200};
-//        int[] tasks = {200};
-//        int[] datacenters = {20};
 
         // Iterate over all possible number of task_n and datacenter_n
         for (int task : tasks) {
-            do_everything(args);
 
             Constants.NO_OF_TASKS = task;
             for (int datacenter : datacenters) {
@@ -73,23 +70,23 @@ public class Main {
 
         // Execute the FCFS Scheduler
         FCFS_Scheduler.main(args);
-        save_outputs(FCFS_Scheduler.getList(), FCFS_Scheduler.getExecMatrix(), FCFS_Scheduler.getCommMatrix(), hyperparameters.concat("/fcfs_data.csv"));
+        save_outputs(FCFS_Scheduler.getList(), FCFS_Scheduler.getExecMatrix(), FCFS_Scheduler.getCommMatrix(), hyperparameters.concat("/fcfs_data.csv"), 0);
 
         // Execute the SJF Scheduler
         SJF_Scheduler.main(args);
-        save_outputs(SJF_Scheduler.getList(), SJF_Scheduler.getExecMatrix(), SJF_Scheduler.getCommMatrix(), hyperparameters.concat("/sjf_data.csv"));
+        save_outputs(SJF_Scheduler.getList(), SJF_Scheduler.getExecMatrix(), SJF_Scheduler.getCommMatrix(), hyperparameters.concat("/sjf_data.csv"), 1);
 
         // Execute the A2C Scheduler
         A2C_Scheduler.main(args);
-        save_outputs(A2C_Scheduler.getList(), A2C_Scheduler.getExecMatrix(), A2C_Scheduler.getCommMatrix(), hyperparameters.concat("/a2c_data.csv"));
+        save_outputs(A2C_Scheduler.getList(), A2C_Scheduler.getExecMatrix(), A2C_Scheduler.getCommMatrix(), hyperparameters.concat("/a2c_data.csv"), 2);
 
         // Execute the Q-Learning Scheduler
         QLearningScheduler.main(args);
-        save_outputs(QLearningScheduler.getList(), QLearningScheduler.getExecMatrix(), QLearningScheduler.getCommMatrix(), hyperparameters.concat("/qlearning_data.csv"));
+        save_outputs(QLearningScheduler.getList(), QLearningScheduler.getExecMatrix(), QLearningScheduler.getCommMatrix(), hyperparameters.concat("/qlearning_data.csv"), 3);
 
         // Execute the Double-Q-Learning Scheduler
         DoubleQLearningScheduler.main(args);
-        save_outputs(DoubleQLearningScheduler.getList(), DoubleQLearningScheduler.getExecMatrix(), DoubleQLearningScheduler.getCommMatrix(), hyperparameters.concat("/double_qlearning_data.csv"));
+        save_outputs(DoubleQLearningScheduler.getList(), DoubleQLearningScheduler.getExecMatrix(), DoubleQLearningScheduler.getCommMatrix(), hyperparameters.concat("/double_qlearning_data.csv"), 4);
 
 
     }
@@ -109,7 +106,7 @@ public class Main {
         void: this function doesn't return anything directly, rather it saves the necessary data
             to .csv files
     */
-    public static void save_outputs(List<Cloudlet> list, double[][] execMatrix, double[][] commMatrix, String csvFilePath) {
+    public static void save_outputs(List<Cloudlet> list, double[][] execMatrix, double[][] commMatrix, String csvFilePath, int type) {
         int size = list.size();
         Cloudlet cloudlet;
 
@@ -175,15 +172,15 @@ public class Main {
             writer.writeNext(waitingTimeRow);
 
 
-            if (csvFilePath.startsWith("/fcfs")) {
+            if (type == 0) {
                 new TargetEntry("fcfs", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime);
-            } else if (csvFilePath.startsWith("/sjf")) {
+            } else if (type == 1) {
                 new TargetEntry("sjf", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime);
-            } else if (csvFilePath.startsWith("/a2c")) {
+            } else if (type == 2) {
                 new TargetEntry("a2c", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime);
-            } else if (csvFilePath.startsWith("/qlearning")) {
+            } else if (type == 3) {
                 new TargetEntry("qlearning", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime);
-            } else if (csvFilePath.startsWith("/double")) {
+            } else if (type == 4) {
                 new TargetEntry("double", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime);
             }
 

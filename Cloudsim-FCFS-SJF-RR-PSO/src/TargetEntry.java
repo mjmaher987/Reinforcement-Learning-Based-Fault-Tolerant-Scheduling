@@ -1,15 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class TargetEntry {
-    private final String type;
-    private final int vmNumber;
-    private final int cloudletNumber;
-    private final double makespan;
-    private final double avg_completion;
-    private final double avg_cost;
-    private final double avg_wait;
-
+public record TargetEntry(String type, int vmNumber, int cloudletNumber, double makespan,
+                          double avg_completion, double avg_cost, double avg_wait) {
     private static final List<TargetEntry> allTargetEntries = new ArrayList<>();
 
     public TargetEntry(String type, int vmNumber, int cloudletNumber, double makespan, double avg_completion, double avg_cost, double avg_wait) {
@@ -48,7 +41,7 @@ public class TargetEntry {
         return avg_wait;
     }
 
-    public static List<TargetEntry> getAllTargetEntries(){
+    public static List<TargetEntry> getAllTargetEntries() {
         return TargetEntry.allTargetEntries;
     }
 }
