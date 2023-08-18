@@ -293,7 +293,7 @@ public class Main {
         // Create a CSV writer
         try (CSVWriter writer = new CSVWriter(new FileWriter(csvFilePath))) {
             String[] header = {"Cloudlet ID", "Status", "Data center ID", "VM ID", "Time",
-                    "Start Time", "Finish Time", "Waiting", "Completion", "Cost", "CPU Utilization"};
+                    "Start Time", "Finish Time", "Waiting", "Completion", "Cost", "CPU Utilization", "RAM Utilization"};
             writer.writeNext(header);
 
             DecimalFormat dft = new DecimalFormat("####.##");
@@ -318,9 +318,11 @@ public class Main {
                 String cost = dft.format(cloudlet.getCostPerSec() * cloudlet.getActualCPUTime());
                 int dcId = cloudlet.getVmId() % Constants.NO_OF_DATA_CENTERS;
                 String cpuUtilization = dft.format(cloudlet.getActualCPUTime() / execMatrix[i][dcId]);
+                // TODO: Is it correct?? to send this time as a parameter to it?
+                String ramUtilization = dft.format(cloudlet.getUtilizationOfRam(cloudlet.getActualCPUTime()));
 
                 String[] row = {cloudletId, status, dataCenterId, vmId, time, startTime, finishTime, waitingTime,
-                        completionTime, cost, cpuUtilization};
+                        completionTime, cost, cpuUtilization, ramUtilization};
                 writer.writeNext(row);
 
                 if (cloudlet.getCloudletStatus() == Cloudlet.SUCCESS) {
