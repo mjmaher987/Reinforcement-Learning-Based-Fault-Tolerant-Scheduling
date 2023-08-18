@@ -166,6 +166,10 @@ public class A2C_Scheduler {
         return A2C_Scheduler.resultList;
     }
 
+    public static List<Cloudlet> getCloudletList(){
+        return cloudletList;
+    }
+
     public static double[][] getExecMatrix() {
         return A2C_Scheduler.execMatrix;
     }

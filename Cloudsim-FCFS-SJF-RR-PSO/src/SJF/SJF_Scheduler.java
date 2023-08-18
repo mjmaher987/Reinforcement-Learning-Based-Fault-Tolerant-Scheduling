@@ -7,7 +7,6 @@ import utils.Constants;
 import utils.DatacenterCreator;
 import utils.GenerateMatrices;
 
-import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -72,10 +71,10 @@ public class SJF_Scheduler {
     private static List<Cloudlet> createCloudlet(int userId, int cloudlets, int idShift) {
         // Creates a container to store Cloudlets
         LinkedList<Cloudlet> list = new LinkedList<Cloudlet>();
-        
+
         //new:
-      //  int minLength=1000;
-     //   int maxLenght=2000;
+        //  int minLength=1000;
+        //   int maxLenght=2000;
 
         //cloudlet parameters
         long fileSize = 300;
@@ -87,9 +86,9 @@ public class SJF_Scheduler {
 
         for (int i = 0; i < cloudlets; i++) {
             int dcId = (int) (Math.random() * Constants.NO_OF_DATA_CENTERS);
-           long length = (long) (1e3 * (commMatrix[i][dcId] + execMatrix[i][dcId]));
+            long length = (long) (1e3 * (commMatrix[i][dcId] + execMatrix[i][dcId]));
             //new
-          //  long length= minLength + (int) (Math.random() * (maxLenght));
+            //  long length= minLength + (int) (Math.random() * (maxLenght));
             cloudlet[i] = new Cloudlet(idShift + i, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
             // setting the owner of these Cloudlets
             cloudlet[i].setUserId(userId);
@@ -98,7 +97,6 @@ public class SJF_Scheduler {
         }
         return list;
     }
-
 
 
     /*
@@ -176,12 +174,12 @@ public class SJF_Scheduler {
     }
 
 
-
-
-
-
     public static List<Cloudlet> getList() {
         return resultList;
+    }
+
+    public static List<Cloudlet> getCloudletList() {
+        return cloudletList;
     }
 
     public static double[][] getExecMatrix() {

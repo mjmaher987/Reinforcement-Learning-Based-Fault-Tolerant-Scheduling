@@ -1,8 +1,6 @@
 package FCFS;
 
 
-import A2C.A2C_Scheduler;
-import SJF.SJF_Scheduler;
 import org.cloudbus.cloudsim.*;
 import org.cloudbus.cloudsim.core.CloudSim;
 import utils.Constants;
@@ -182,6 +180,10 @@ public class FCFS_Scheduler {
         return resultList;
     }
 
+    public static List<Cloudlet> getCloudletList(){
+        return cloudletList;
+    }
+
     public static double[][] getExecMatrix() {
         return execMatrix;
     }
@@ -189,6 +191,8 @@ public class FCFS_Scheduler {
     public static double[][] getCommMatrix() {
         return commMatrix;
     }
+
+
 
 
 }

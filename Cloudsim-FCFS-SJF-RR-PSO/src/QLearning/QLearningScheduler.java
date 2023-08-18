@@ -9,14 +9,12 @@ package QLearning;
 // Professors: Dr. Mohsen Anasari, Dr.Sepideh Safari
 // Supervisors: Abolfazl Younesi, Elyas Oustad
 
-import SJF.SJF_Scheduler;
 import org.cloudbus.cloudsim.*;
 import org.cloudbus.cloudsim.core.CloudSim;
 import utils.Constants;
 import utils.DatacenterCreator;
 import utils.GenerateMatrices;
 
-import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -178,6 +176,10 @@ public class QLearningScheduler {
 
     public static List<Cloudlet> getList() {
         return resultList;
+    }
+
+    public static List<Cloudlet> getCloudletList(){
+        return cloudletList;
     }
 
     public static double[][] getExecMatrix() {

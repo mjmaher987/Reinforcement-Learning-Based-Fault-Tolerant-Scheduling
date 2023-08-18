@@ -249,23 +249,23 @@ public class Main {
 
         // Execute the FCFS Scheduler
         FCFS_Scheduler.main(args);
-        save_outputs(FCFS_Scheduler.getList(), FCFS_Scheduler.getExecMatrix(), FCFS_Scheduler.getCommMatrix(), hyperparameters.concat("/fcfs_data.csv"), 0);
+        save_outputs(FCFS_Scheduler.getList(), FCFS_Scheduler.getExecMatrix(), FCFS_Scheduler.getCommMatrix(), hyperparameters.concat("/fcfs_data.csv"), 0, FCFS_Scheduler.getCloudletList());
 
         // Execute the SJF Scheduler
         SJF_Scheduler.main(args);
-        save_outputs(SJF_Scheduler.getList(), SJF_Scheduler.getExecMatrix(), SJF_Scheduler.getCommMatrix(), hyperparameters.concat("/sjf_data.csv"), 1);
+        save_outputs(SJF_Scheduler.getList(), SJF_Scheduler.getExecMatrix(), SJF_Scheduler.getCommMatrix(), hyperparameters.concat("/sjf_data.csv"), 1, SJF_Scheduler.getCloudletList());
 
         // Execute the A2C Scheduler
         A2C_Scheduler.main(args);
-        save_outputs(A2C_Scheduler.getList(), A2C_Scheduler.getExecMatrix(), A2C_Scheduler.getCommMatrix(), hyperparameters.concat("/a2c_data.csv"), 2);
+        save_outputs(A2C_Scheduler.getList(), A2C_Scheduler.getExecMatrix(), A2C_Scheduler.getCommMatrix(), hyperparameters.concat("/a2c_data.csv"), 2, A2C_Scheduler.getCloudletList());
 
         // Execute the Q-Learning Scheduler
         QLearningScheduler.main(args);
-        save_outputs(QLearningScheduler.getList(), QLearningScheduler.getExecMatrix(), QLearningScheduler.getCommMatrix(), hyperparameters.concat("/qlearning_data.csv"), 3);
+        save_outputs(QLearningScheduler.getList(), QLearningScheduler.getExecMatrix(), QLearningScheduler.getCommMatrix(), hyperparameters.concat("/qlearning_data.csv"), 3, QLearningScheduler.getCloudletList());
 
         // Execute the Double-Q-Learning Scheduler
         DoubleQLearningScheduler.main(args);
-        save_outputs(DoubleQLearningScheduler.getList(), DoubleQLearningScheduler.getExecMatrix(), DoubleQLearningScheduler.getCommMatrix(), hyperparameters.concat("/double_qlearning_data.csv"), 4);
+        save_outputs(DoubleQLearningScheduler.getList(), DoubleQLearningScheduler.getExecMatrix(), DoubleQLearningScheduler.getCommMatrix(), hyperparameters.concat("/double_qlearning_data.csv"), 4, DoubleQLearningScheduler.getCloudletList());
 
 
     }
@@ -285,7 +285,7 @@ public class Main {
         void: this function doesn't return anything directly, rather it saves the necessary data
             to .csv files
     */
-    public static void save_outputs(List<Cloudlet> list, double[][] execMatrix, double[][] commMatrix, String csvFilePath, int type) {
+    public static void save_outputs(List<Cloudlet> list, double[][] execMatrix, double[][] commMatrix, String csvFilePath, int type, List<Cloudlet> cloudletList) {
         int size = list.size();
         Cloudlet cloudlet;
 
@@ -350,17 +350,25 @@ public class Main {
             String[] waitingTimeRow = {"Avg Waiting Time:", String.valueOf(avgWaitingTime)};
             writer.writeNext(waitingTimeRow);
 
+            int completedCloudlets = list.size();
+            int totalCloudlets = cloudletList.size();
+            double successfulRate = (double) completedCloudlets / totalCloudlets;
+            String[] successfulRateRow = {"Successful Rate:", String.valueOf(successfulRate)};
+            writer.writeNext(successfulRateRow);
+
+
+
 
             if (type == 0) {
-                new TargetEntry("fcfs", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime);
+                new TargetEntry("fcfs", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime, successfulRate);
             } else if (type == 1) {
-                new TargetEntry("sjf", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime);
+                new TargetEntry("sjf", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime, successfulRate);
             } else if (type == 2) {
-                new TargetEntry("a2c", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime);
+                new TargetEntry("a2c", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime, successfulRate);
             } else if (type == 3) {
-                new TargetEntry("qlearning", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime);
+                new TargetEntry("qlearning", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime, successfulRate);
             } else if (type == 4) {
-                new TargetEntry("double", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime);
+                new TargetEntry("double", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime, successfulRate);
             }
 
 

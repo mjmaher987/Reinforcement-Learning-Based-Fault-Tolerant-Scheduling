@@ -112,6 +112,10 @@ public class DoubleQLearningScheduler {
         return resultList;
     }
 
+    public static List<Cloudlet> getCloudletList(){
+        return cloudletList;
+    }
+
     public static double[][] getExecMatrix() {
         return execMatrix;
     }
