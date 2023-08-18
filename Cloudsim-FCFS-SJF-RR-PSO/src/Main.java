@@ -223,6 +223,9 @@ public class Main {
                 return t;
             }
         }
+        System.out.println(task);
+        System.out.println(datacenter);
+        System.out.println(type);
         return null;
     }
 
@@ -302,6 +305,7 @@ public class Main {
             double totalCompletionTime = 0;
             double totalCost = 0;
             double totalWaitingTime = 0;
+            double cpuTotalTime = 0;
 
             for (int i = 0; i < size; i++) {
                 cloudlet = list.get(i);
@@ -318,6 +322,7 @@ public class Main {
                 String cost = dft.format(cloudlet.getCostPerSec() * cloudlet.getActualCPUTime());
                 int dcId = cloudlet.getVmId() % Constants.NO_OF_DATA_CENTERS;
                 String cpuUtilization = dft.format(cloudlet.getActualCPUTime() / execMatrix[i][dcId]);
+                cpuTotalTime += cloudlet.getActualCPUTime() / execMatrix[i][dcId];
                 // TODO: Is it correct?? to send this time as a parameter to it?
                 String ramUtilization = dft.format(cloudlet.getUtilizationOfRam(cloudlet.getActualCPUTime()));
 
@@ -358,19 +363,24 @@ public class Main {
             String[] successfulRateRow = {"Successful Rate:", String.valueOf(successfulRate)};
             writer.writeNext(successfulRateRow);
 
+            double avgCpuUtilization = cpuTotalTime / size;
+            String[] avgCpuUtilizationRow = {"Avg CPU Utilization:", String.valueOf(avgCpuUtilization)};
+            writer.writeNext(avgCpuUtilizationRow);
+
+
 
 
 
             if (type == 0) {
-                new TargetEntry("fcfs", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime, successfulRate);
+                new TargetEntry("fcfs", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime, successfulRate, avgCpuUtilization);
             } else if (type == 1) {
-                new TargetEntry("sjf", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime, successfulRate);
+                new TargetEntry("sjf", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime, successfulRate, avgCpuUtilization);
             } else if (type == 2) {
-                new TargetEntry("a2c", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime, successfulRate);
+                new TargetEntry("a2c", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime, successfulRate, avgCpuUtilization);
             } else if (type == 3) {
-                new TargetEntry("qlearning", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime, successfulRate);
+                new TargetEntry("qlearning", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime, successfulRate, avgCpuUtilization);
             } else if (type == 4) {
-                new TargetEntry("double", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime, successfulRate);
+                new TargetEntry("double", Constants.NO_OF_DATA_CENTERS, Constants.NO_OF_TASKS, makespan, avgCompletionTime, avgCost, avgWaitingTime, successfulRate, avgCpuUtilization);
             }
 
 
