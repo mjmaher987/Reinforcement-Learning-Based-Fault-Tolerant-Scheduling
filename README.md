@@ -16,6 +16,9 @@ Related to the article that is going to be published.
   - for success rate we have to add "deadline"
   - for memory we have to give the current time (or change the nethod) -> it is always giving 1.0 right now
 
+## Overall View of the remaind parts
+![image](https://github.com/mjmaher987/Reinforcement-Learning-Based-Fault-Tolerant-Scheduling/assets/77095635/746d6f05-9d02-47f4-b34a-5edfd0a0da1e)
+
 ## Important Notes
 - Delete these 2 files (Note: This issue may be resolved on the next versions)
    - Delete CommunicationTimeMatrix.txt
