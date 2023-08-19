@@ -10,10 +10,20 @@ Related to the article that is going to be published.
 - What is iFogSim : https://amirkabir-science.com/cloudsim-free-course/
 - iFogSim Workshop : youtube.com/watch?v=rEy_rSRfXIc
 
+## Comments
+- The power cannot be reported beause there is no power-based method used in the process (like DVFS, etc.).
+- Successful rate and memory have to be revised
+  - for success rate we have to add "deadline"
+  - for memory we have to give the current time (or change the nethod) -> it is always giving 1.0 right now
+
 ## Important Notes
 - Delete these 2 files (Note: This issue may be resolved on the next versions)
    - Delete CommunicationTimeMatrix.txt
    - Delete ExecutionTimeMatrix.txt
+- Other TODOs
+  - Create the excel fils based on these
+  - Literature Review
+  - Graphical Abstract
 
 
 ## First Link
