@@ -295,7 +295,8 @@ public class Main {
         // Create a CSV writer
         try (CSVWriter writer = new CSVWriter(new FileWriter(csvFilePath))) {
             String[] header = {"Cloudlet ID", "Status", "Data center ID", "VM ID", "Time",
-                    "Start Time", "Finish Time", "Waiting", "Completion", "Cost", "CPU Utilization", "RAM Utilization"};
+                    "Start Time", "Finish Time", "Waiting", "Completion", "RAM Utilization1",
+                    "RAM Utilization2", "RAM Utilization3", "RAM Utilization4", "RAM Utilization5", "RAM Utilization6"};
             writer.writeNext(header);
 
             DecimalFormat dft = new DecimalFormat("####.##");
@@ -306,12 +307,16 @@ public class Main {
             double totalWaitingTime = 0;
             double cpuTotalTime = 0;
 
+            int success = 0;
             for (int i = 0; i < size; i++) {
                 cloudlet = list.get(i);
 
                 String cloudletId = dft.format(cloudlet.getCloudletId());
                 //status
-                String status = cloudlet.getCloudletStatus() == Cloudlet.SUCCESS ? "SUCCESS" : "Failure";
+                String status = cloudlet.getCloudletStatus() == Cloudlet.SUCCESS & cloudlet.getFinishTime() < 2200? "SUCCESS" : "Failure";
+                if (status.equals("SUCCESS")){
+                    success += 1;
+                }
                 String dataCenterId = dft.format(cloudlet.getResourceId());
                 String vmId = dft.format(cloudlet.getVmId());
                 //time
@@ -325,6 +330,21 @@ public class Main {
                 //utilization
                 int dcId = cloudlet.getVmId() % Constants.NO_OF_DATA_CENTERS;
                 cpuTotalTime += cloudlet.getActualCPUTime();
+                double ramUtilization1 = (double) cloudlet.getUtilizationOfRam(cloudlet.getFinishTime());
+                double ramUtilization2 = (double) cloudlet.getUtilizationOfRam(cloudlet.getWallClockTime());
+                double ramUtilization3 = (double) cloudlet.getUtilizationOfRam(cloudlet.getActualCPUTime());
+                double ramUtilization4 = (double) cloudlet.getUtilizationOfRam(cloudlet.getSubmissionTime());
+                double ramUtilization5 = (double) cloudlet.getUtilizationOfRam(System.currentTimeMillis());
+                double ramUtilization6 = (double) cloudlet.getUtilizationOfRam(CloudSim.clock());
+
+                String ramUtilization1Data = dft.format(ramUtilization1);
+                String ramUtilization2Data = dft.format(ramUtilization2);
+                String ramUtilization3Data = dft.format(ramUtilization3);
+                String ramUtilization4Data = dft.format(ramUtilization4);
+                String ramUtilization5Data = dft.format(ramUtilization5);
+                String ramUtilization6Data = dft.format(ramUtilization6);
+
+
 //                cpuTotalTime += cloudlet.getActualCPUTime() / execMatrix[i][dcId];
 //                String ramUtilization = dft.format(cloudlet.getUtilizationOfRam(CloudSim.clock()));
 //                String cpuUtilization = dft.format(cloudlet.getUtilizationOfCpu(CloudSim.clock()));
@@ -333,7 +353,7 @@ public class Main {
 
 
                 String[] row = {cloudletId, status, dataCenterId, vmId, time, startTime, finishTime, waitingTime,
-                        completionTime};
+                        completionTime, ramUtilization1Data, ramUtilization2Data, ramUtilization3Data, ramUtilization4Data, ramUtilization5Data, ramUtilization6Data};
                 writer.writeNext(row);
 
                 if (cloudlet.getCloudletStatus() == Cloudlet.SUCCESS) {
@@ -366,7 +386,8 @@ public class Main {
 
             int completedCloudlets = list.size();
             int totalCloudlets = cloudletList.size();
-            double successfulRate = (double) completedCloudlets / totalCloudlets;
+//            double successfulRate = (double) completedCloudlets / totalCloudlets;
+            double successfulRate = (double) success / Constants.NO_OF_TASKS;
             String[] successfulRateRow = {"Successful Rate:", String.valueOf(successfulRate)};
             writer.writeNext(successfulRateRow);
 
