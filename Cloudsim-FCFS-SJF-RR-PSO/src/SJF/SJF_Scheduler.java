@@ -3,6 +3,7 @@ package SJF;
 
 import org.cloudbus.cloudsim.*;
 import org.cloudbus.cloudsim.core.CloudSim;
+import org.cloudbus.cloudsim.power.PowerDatacenter;
 import utils.Constants;
 import utils.DatacenterCreator;
 import utils.GenerateMatrices;
@@ -15,7 +16,7 @@ public class SJF_Scheduler {
 
     private static List<Cloudlet> cloudletList;
     private static List<Vm> vmList;
-    private static Datacenter[] datacenter;
+    private static PowerDatacenter[] datacenter;
     private static double[][] commMatrix;
     private static double[][] execMatrix;
     private static List<Cloudlet> resultList;
@@ -109,12 +110,15 @@ public class SJF_Scheduler {
      output(s):
         void: it doesn't return anything, it rather schedules the tasks based on the policy
     */
-    public static void main(String[] args) {
+    public static double main(String[] args) {
         Log.printLine("Starting SJF Scheduler...");
 
 
         execMatrix = GenerateMatrices.getExecMatrix();
         commMatrix = GenerateMatrices.getCommMatrix();
+
+        double start_time = 0.0;
+        double end_time = 0.0;
 
         try {
             int num_user = 1;   // number of grid users
@@ -124,10 +128,16 @@ public class SJF_Scheduler {
             CloudSim.init(num_user, calendar, trace_flag);
 
             // Second step: Create Datacenters
-            datacenter = new Datacenter[Constants.NO_OF_DATA_CENTERS];
+//            datacenter = new Datacenter[Constants.NO_OF_DATA_CENTERS];
+//            for (int i = 0; i < Constants.NO_OF_DATA_CENTERS; i++) {
+//                datacenter[i] = DatacenterCreator.createDatacenter("Datacenter_" + i);
+//            }
+            // Second step: Create Datacenters
+            datacenter = new PowerDatacenter[Constants.NO_OF_DATA_CENTERS];
             for (int i = 0; i < Constants.NO_OF_DATA_CENTERS; i++) {
                 datacenter[i] = DatacenterCreator.createDatacenter("Datacenter_" + i);
             }
+            // getPower()
 
             //Third step: Create Broker
             SJFDatacenterBroker broker = createBroker("Broker_0");
@@ -141,12 +151,14 @@ public class SJF_Scheduler {
             broker.submitCloudletList(cloudletList);
 
             // Fifth step: Starts the simulation
+            start_time = System.currentTimeMillis();
             CloudSim.startSimulation();
 
             // Final step: Print results when simulation is over
             List<Cloudlet> newList = broker.getCloudletReceivedList();
             //newList.addAll(globalBroker.getBroker().getCloudletReceivedList());
 
+            end_time = System.currentTimeMillis();
             CloudSim.stopSimulation();
 
             SJF_Scheduler.resultList = newList;
@@ -156,6 +168,7 @@ public class SJF_Scheduler {
             e.printStackTrace();
             Log.printLine("The simulation has been terminated due to an unexpected error");
         }
+        return end_time - start_time;
     }
 
 
@@ -188,5 +201,9 @@ public class SJF_Scheduler {
 
     public static double[][] getCommMatrix() {
         return commMatrix;
+    }
+
+    public static PowerDatacenter[] getDatacenter(){
+        return datacenter;
     }
 }

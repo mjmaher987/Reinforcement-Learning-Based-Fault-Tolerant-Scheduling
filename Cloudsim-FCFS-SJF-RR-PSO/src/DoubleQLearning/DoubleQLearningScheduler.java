@@ -1,11 +1,11 @@
 package DoubleQLearning;
 
 
-
 // DoubleQLearningScheduler.java
 
 import org.cloudbus.cloudsim.*;
 import org.cloudbus.cloudsim.core.CloudSim;
+import org.cloudbus.cloudsim.power.PowerDatacenter;
 import utils.Constants;
 import utils.DatacenterCreator;
 import utils.GenerateMatrices;
@@ -18,16 +18,19 @@ public class DoubleQLearningScheduler {
 
     private static List<Cloudlet> cloudletList;
     private static List<Vm> vmList;
-    private static Datacenter[] datacenter;
+    private static PowerDatacenter[] datacenter;
     private static double[][] commMatrix;
     private static double[][] execMatrix;
     private static List<Cloudlet> resultList;
 
-    public static void main(String[] args) {
+    public static double main(String[] args) {
         Log.printLine("Starting Double Q-Learning Scheduler...");
 
         execMatrix = GenerateMatrices.getExecMatrix();
         commMatrix = GenerateMatrices.getCommMatrix();
+
+        double start_time = 0.0;
+        double end_time = 0.0;
 
         try {
             int num_user = 1;
@@ -36,10 +39,16 @@ public class DoubleQLearningScheduler {
 
             CloudSim.init(num_user, calendar, trace_flag);
 
-            datacenter = new Datacenter[Constants.NO_OF_DATA_CENTERS];
+//            datacenter = new Datacenter[Constants.NO_OF_DATA_CENTERS];
+//            for (int i = 0; i < Constants.NO_OF_DATA_CENTERS; i++) {
+//                datacenter[i] = DatacenterCreator.createDatacenter("Datacenter_" + i);
+//            }
+            // Second step: Create Datacenters
+            datacenter = new PowerDatacenter[Constants.NO_OF_DATA_CENTERS];
             for (int i = 0; i < Constants.NO_OF_DATA_CENTERS; i++) {
                 datacenter[i] = DatacenterCreator.createDatacenter("Datacenter_" + i);
             }
+            // getPower()
 
             DoubleQLearningDatacenterBroker broker = createBroker("Broker_0");
             int brokerId = broker.getId();
@@ -50,10 +59,14 @@ public class DoubleQLearningScheduler {
             broker.submitVmList(vmList);
             broker.submitCloudletList(cloudletList);
 
+//            start_time = CloudSim.clock();
+            start_time = System.currentTimeMillis();
             CloudSim.startSimulation();
 
             resultList = broker.getCloudletReceivedList();
 
+//            end_time = CloudSim.clock();
+            end_time = System.currentTimeMillis();
             CloudSim.stopSimulation();
 
             Log.printLine(DoubleQLearningScheduler.class.getName() + " finished!");
@@ -61,6 +74,7 @@ public class DoubleQLearningScheduler {
             e.printStackTrace();
             Log.printLine("The simulation has been terminated due to an unexpected error");
         }
+        return end_time - start_time;
     }
 
     private static List<Vm> createVM(int userId, int vms) {
@@ -112,7 +126,7 @@ public class DoubleQLearningScheduler {
         return resultList;
     }
 
-    public static List<Cloudlet> getCloudletList(){
+    public static List<Cloudlet> getCloudletList() {
         return cloudletList;
     }
 
@@ -122,5 +136,9 @@ public class DoubleQLearningScheduler {
 
     public static double[][] getCommMatrix() {
         return commMatrix;
+    }
+
+    public static PowerDatacenter[] getDatacenter() {
+        return datacenter;
     }
 }

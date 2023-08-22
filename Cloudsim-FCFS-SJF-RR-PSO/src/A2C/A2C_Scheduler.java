@@ -3,6 +3,7 @@ package A2C;
 
 import org.cloudbus.cloudsim.*;
 import org.cloudbus.cloudsim.core.CloudSim;
+import org.cloudbus.cloudsim.power.PowerDatacenter;
 import utils.Constants;
 import utils.DatacenterCreator;
 import utils.GenerateMatrices;
@@ -26,7 +27,7 @@ import java.util.List;
 public class A2C_Scheduler {
     private static List<Cloudlet> cloudletList;
     private static List<Vm> vmList;
-    private static Datacenter[] datacenter;
+    private static PowerDatacenter[] datacenter;
     private static double[][] commMatrix;
     private static double[][] execMatrix;
     private static List<Cloudlet> resultList;
@@ -108,13 +109,15 @@ public class A2C_Scheduler {
      output(s):
         void: it doesn't return anything, it rather schedules the tasks based on the policy
     */
-    public static void main(String[] args) {
+    public static double main(String[] args) {
         Log.printLine("Starting A2C Scheduler...");
 
 
         execMatrix = GenerateMatrices.getExecMatrix();
         commMatrix = GenerateMatrices.getCommMatrix();
 
+        double start_time = 0.0;
+        double end_time = 0.0;
         try {
             int num_user = 1; // number of grid users
             Calendar calendar = Calendar.getInstance();
@@ -122,10 +125,16 @@ public class A2C_Scheduler {
 
             CloudSim.init(num_user, calendar, trace_flag);
 
-            datacenter = new Datacenter[Constants.NO_OF_DATA_CENTERS];
+//            datacenter = new Datacenter[Constants.NO_OF_DATA_CENTERS];
+//            for (int i = 0; i < Constants.NO_OF_DATA_CENTERS; i++) {
+//                datacenter[i] = DatacenterCreator.createDatacenter("Datacenter_" + i);
+//            }
+            // Second step: Create Datacenters
+            datacenter = new PowerDatacenter[Constants.NO_OF_DATA_CENTERS];
             for (int i = 0; i < Constants.NO_OF_DATA_CENTERS; i++) {
                 datacenter[i] = DatacenterCreator.createDatacenter("Datacenter_" + i);
             }
+            // getPower()
             A2CDataCenterBroker broker = createBroker("Broker");
 
             cloudletList = createCloudlet(broker.getId(), Constants.NO_OF_TASKS, 0);
@@ -134,9 +143,12 @@ public class A2C_Scheduler {
             broker.submitCloudletList(cloudletList);
             broker.submitVmList(vmList);
 
+            start_time = System.currentTimeMillis();
             CloudSim.startSimulation();
 
             List<Cloudlet> resultList = broker.getCloudletReceivedList();
+
+            end_time = System.currentTimeMillis();
             CloudSim.stopSimulation();
 
 
@@ -145,6 +157,7 @@ public class A2C_Scheduler {
         } catch (Exception e) {
             Log.printLine("Unwanted errors happen");
         }
+        return end_time - start_time;
     }
 
 
@@ -176,6 +189,10 @@ public class A2C_Scheduler {
 
     public static double[][] getCommMatrix() {
         return A2C_Scheduler.commMatrix;
+    }
+
+    public static PowerDatacenter[] getDatacenter(){
+        return datacenter;
     }
 }
 

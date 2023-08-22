@@ -7,6 +7,8 @@ import QLearning.QLearningScheduler;
 import SJF.SJF_Scheduler;
 import com.opencsv.CSVWriter;
 import org.cloudbus.cloudsim.Cloudlet;
+import org.cloudbus.cloudsim.core.CloudSim;
+import org.cloudbus.cloudsim.power.PowerDatacenter;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.CategoryChart;
 import org.knowm.xchart.CategoryChartBuilder;
@@ -32,19 +34,26 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        double[] tasks = {10, 20, 30, 40, 50, 200, 400, 600, 800, 1000};
-        double[] datacenters = {2, 5, 8, 10, 50, 100, 150, 200};
+//        double[] tasks = {10, 20, 30, 40, 50, 200, 400, 600, 800, 1000};
+//        double[] datacenters = {2, 5, 8, 10, 50, 100, 150, 200};
 
-        // Iterate over all possible number of task_n and datacenter_n
-        for (double task : tasks) {
+//        for (double task : tasks) {
+//
+//            Constants.NO_OF_TASKS = (int) task;
+//            for (double datacenter : datacenters) {
+//
+//                Constants.NO_OF_DATA_CENTERS = (int) datacenter;
+//                do_everything(args);
+//
+//            }
+//
+//        }
 
-            Constants.NO_OF_TASKS = (int) task;
-            for (double datacenter : datacenters) {
-                Constants.NO_OF_DATA_CENTERS = (int) datacenter;
-                do_everything(args);
-            }
-
-        }
+        double[] tasks = {10};
+        double[] datacenters = {2};
+        Constants.NO_OF_TASKS = 10;
+        Constants.NO_OF_DATA_CENTERS = 2;
+        do_everything(args);
 
 
         List<String> types = new ArrayList<>();
@@ -56,8 +65,6 @@ public class Main {
 
 
         // Save based on task number
-
-
         for (double task : tasks) {
             List<double[]> datacenterDataList_makespan = new ArrayList<>();
             List<double[]> datacenterDataList_avg_completion = new ArrayList<>();
@@ -100,12 +107,7 @@ public class Main {
         }
 
 
-
-
-
-
         // Save another way
-
         for (double datacenter : datacenters) {
             List<double[]> taskDataList_makespan = new ArrayList<>();
             List<double[]> taskDataList_avg_completion = new ArrayList<>();
@@ -223,9 +225,6 @@ public class Main {
                 return t;
             }
         }
-        System.out.println(task);
-        System.out.println(datacenter);
-        System.out.println(type);
         return null;
     }
 
@@ -251,24 +250,24 @@ public class Main {
         new GenerateMatrices();
 
         // Execute the FCFS Scheduler
-        FCFS_Scheduler.main(args);
-        save_outputs(FCFS_Scheduler.getList(), FCFS_Scheduler.getExecMatrix(), FCFS_Scheduler.getCommMatrix(), hyperparameters.concat("/fcfs_data.csv"), 0, FCFS_Scheduler.getCloudletList());
+        double time_duration = FCFS_Scheduler.main(args);
+        save_outputs(FCFS_Scheduler.getList(), FCFS_Scheduler.getExecMatrix(), FCFS_Scheduler.getCommMatrix(), hyperparameters.concat("/fcfs_data.csv"), 0, FCFS_Scheduler.getCloudletList(), FCFS_Scheduler.getDatacenter(), time_duration);
 
         // Execute the SJF Scheduler
-        SJF_Scheduler.main(args);
-        save_outputs(SJF_Scheduler.getList(), SJF_Scheduler.getExecMatrix(), SJF_Scheduler.getCommMatrix(), hyperparameters.concat("/sjf_data.csv"), 1, SJF_Scheduler.getCloudletList());
+        time_duration = SJF_Scheduler.main(args);
+        save_outputs(SJF_Scheduler.getList(), SJF_Scheduler.getExecMatrix(), SJF_Scheduler.getCommMatrix(), hyperparameters.concat("/sjf_data.csv"), 1, SJF_Scheduler.getCloudletList(), SJF_Scheduler.getDatacenter(), time_duration);
 
         // Execute the A2C Scheduler
-        A2C_Scheduler.main(args);
-        save_outputs(A2C_Scheduler.getList(), A2C_Scheduler.getExecMatrix(), A2C_Scheduler.getCommMatrix(), hyperparameters.concat("/a2c_data.csv"), 2, A2C_Scheduler.getCloudletList());
+        time_duration = A2C_Scheduler.main(args);
+        save_outputs(A2C_Scheduler.getList(), A2C_Scheduler.getExecMatrix(), A2C_Scheduler.getCommMatrix(), hyperparameters.concat("/a2c_data.csv"), 2, A2C_Scheduler.getCloudletList(), A2C_Scheduler.getDatacenter(), time_duration);
 
         // Execute the Q-Learning Scheduler
-        QLearningScheduler.main(args);
-        save_outputs(QLearningScheduler.getList(), QLearningScheduler.getExecMatrix(), QLearningScheduler.getCommMatrix(), hyperparameters.concat("/qlearning_data.csv"), 3, QLearningScheduler.getCloudletList());
+        time_duration = QLearningScheduler.main(args);
+        save_outputs(QLearningScheduler.getList(), QLearningScheduler.getExecMatrix(), QLearningScheduler.getCommMatrix(), hyperparameters.concat("/qlearning_data.csv"), 3, QLearningScheduler.getCloudletList(), QLearningScheduler.getDatacenter(), time_duration);
 
         // Execute the Double-Q-Learning Scheduler
-        DoubleQLearningScheduler.main(args);
-        save_outputs(DoubleQLearningScheduler.getList(), DoubleQLearningScheduler.getExecMatrix(), DoubleQLearningScheduler.getCommMatrix(), hyperparameters.concat("/double_qlearning_data.csv"), 4, DoubleQLearningScheduler.getCloudletList());
+        time_duration = DoubleQLearningScheduler.main(args);
+        save_outputs(DoubleQLearningScheduler.getList(), DoubleQLearningScheduler.getExecMatrix(), DoubleQLearningScheduler.getCommMatrix(), hyperparameters.concat("/double_qlearning_data.csv"), 4, DoubleQLearningScheduler.getCloudletList(), DoubleQLearningScheduler.getDatacenter(), time_duration);
 
 
     }
@@ -288,7 +287,7 @@ public class Main {
         void: this function doesn't return anything directly, rather it saves the necessary data
             to .csv files
     */
-    public static void save_outputs(List<Cloudlet> list, double[][] execMatrix, double[][] commMatrix, String csvFilePath, int type, List<Cloudlet> cloudletList) {
+    public static void save_outputs(List<Cloudlet> list, double[][] execMatrix, double[][] commMatrix, String csvFilePath, int type, List<Cloudlet> cloudletList, PowerDatacenter[] datacenter, double time_duration) {
         int size = list.size();
         Cloudlet cloudlet;
 
@@ -311,23 +310,30 @@ public class Main {
                 cloudlet = list.get(i);
 
                 String cloudletId = dft.format(cloudlet.getCloudletId());
+                //status
                 String status = cloudlet.getCloudletStatus() == Cloudlet.SUCCESS ? "SUCCESS" : "Failure";
                 String dataCenterId = dft.format(cloudlet.getResourceId());
                 String vmId = dft.format(cloudlet.getVmId());
+                //time
                 String time = dft.format(cloudlet.getActualCPUTime());
                 String startTime = dft.format(cloudlet.getExecStartTime());
                 String finishTime = dft.format(cloudlet.getFinishTime());
                 String waitingTime = dft.format(cloudlet.getWaitingTime());
                 String completionTime = dft.format(cloudlet.getActualCPUTime() + cloudlet.getWaitingTime());
+                //cost
                 String cost = dft.format(cloudlet.getCostPerSec() * cloudlet.getActualCPUTime());
+                //utilization
                 int dcId = cloudlet.getVmId() % Constants.NO_OF_DATA_CENTERS;
-                String cpuUtilization = dft.format(cloudlet.getActualCPUTime() / execMatrix[i][dcId]);
-                cpuTotalTime += cloudlet.getActualCPUTime() / execMatrix[i][dcId];
-                // TODO: Is it correct?? to send this time as a parameter to it?
-                String ramUtilization = dft.format(cloudlet.getUtilizationOfRam(cloudlet.getActualCPUTime()));
+                cpuTotalTime += cloudlet.getActualCPUTime();
+//                cpuTotalTime += cloudlet.getActualCPUTime() / execMatrix[i][dcId];
+//                String ramUtilization = dft.format(cloudlet.getUtilizationOfRam(CloudSim.clock()));
+//                String cpuUtilization = dft.format(cloudlet.getUtilizationOfCpu(CloudSim.clock()));
+//                System.out.println(cloudlet.getUtilizationOfRam(CloudSim.clock()));
+//                System.out.println(cloudlet.getUtilizationOfCpu(CloudSim.clock()));
+
 
                 String[] row = {cloudletId, status, dataCenterId, vmId, time, startTime, finishTime, waitingTime,
-                        completionTime, cost, cpuUtilization, ramUtilization};
+                        completionTime};
                 writer.writeNext(row);
 
                 if (cloudlet.getCloudletStatus() == Cloudlet.SUCCESS) {
@@ -336,6 +342,7 @@ public class Main {
                     totalWaitingTime += Double.parseDouble(waitingTime);
                 }
             }
+
 
             double makespan = calcMakespan(list, execMatrix, commMatrix);
             String[] makespanRow = {"Makespan using QLearning:", String.valueOf(makespan)};
@@ -363,12 +370,21 @@ public class Main {
             String[] successfulRateRow = {"Successful Rate:", String.valueOf(successfulRate)};
             writer.writeNext(successfulRateRow);
 
-            double avgCpuUtilization = cpuTotalTime / size;
+            double avgCpuUtilization = cpuTotalTime / (time_duration * Constants.NO_OF_DATA_CENTERS);
+            System.out.println("''''''''''''''''''");
+            System.out.println(cpuTotalTime);
+            System.out.println(CloudSim.clock());
+            System.out.println(avgCpuUtilization);
             String[] avgCpuUtilizationRow = {"Avg CPU Utilization:", String.valueOf(avgCpuUtilization)};
             writer.writeNext(avgCpuUtilizationRow);
 
-
-
+            double totalPower = 0.0;
+            for (int i = 0; i < Constants.NO_OF_DATA_CENTERS; i++) {
+                PowerDatacenter pdc = datacenter[i];
+                totalPower += pdc.getPower();
+            }
+            String[] totalPowerRow = {"Total Power:", String.valueOf(totalPower)};
+            writer.writeNext(totalPowerRow);
 
 
             if (type == 0) {

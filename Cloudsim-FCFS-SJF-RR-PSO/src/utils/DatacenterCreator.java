@@ -2,6 +2,9 @@ package utils;
 
 
 import org.cloudbus.cloudsim.*;
+import org.cloudbus.cloudsim.power.PowerDatacenter;
+import org.cloudbus.cloudsim.power.PowerHost;
+import org.cloudbus.cloudsim.power.models.PowerModelLinear;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
@@ -12,7 +15,7 @@ import java.util.List;
 
 public class DatacenterCreator {
 
-    public static Datacenter createDatacenter(String name) {
+    public static PowerDatacenter createDatacenter(String name) {
 
         List<Host> hostList = new ArrayList<Host>();
         List<Pe> peList = new ArrayList<Pe>();
@@ -26,13 +29,14 @@ public class DatacenterCreator {
         int bw = 200000;
 
         hostList.add(
-                new Host(
+                new PowerHost(
                         hostId,
                         new RamProvisionerSimple(ram),
                         new BwProvisionerSimple(bw),
                         storage,
                         peList,
-                        new VmSchedulerTimeShared(peList)
+                        new VmSchedulerTimeShared(peList),
+                        new PowerModelLinear(117, 10)
                 )
         );
 
@@ -40,8 +44,8 @@ public class DatacenterCreator {
         String os = "Linux";          // operating system
         String vmm = "Xen";
         double time_zone = 10.0;         // time zone this resource located
-        double cost = 3.0;              // the cost of using processing in this resource
-        double costPerMem = 0.05;        // the cost of using memory in this resource
+        double cost = 2.0;              // the cost of using processing in this resource
+        double costPerMem = 0.02;        // the cost of using memory in this resource
         double costPerStorage = 0.1;    // the cost of using storage in this resource
         double costPerBw = 0.1;            // the cost of using bw in this resource
         LinkedList<Storage> storageList = new LinkedList<Storage>();    //we are not adding SAN devices by now
@@ -49,9 +53,9 @@ public class DatacenterCreator {
         DatacenterCharacteristics characteristics = new DatacenterCharacteristics(
                 arch, os, vmm, hostList, time_zone, cost, costPerMem, costPerStorage, costPerBw);
 
-        Datacenter datacenter = null;
+        PowerDatacenter datacenter = null;
         try {
-            datacenter = new Datacenter(name, characteristics, new VmAllocationPolicySimple(hostList), storageList, 0);
+            datacenter = new PowerDatacenter(name, characteristics, new VmAllocationPolicySimple(hostList), storageList, 1);
         } catch (Exception e) {
             e.printStackTrace();
         }
