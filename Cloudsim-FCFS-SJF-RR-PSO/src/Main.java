@@ -49,13 +49,71 @@ public class Main {
 //
 //        }
 
-        double[] tasks = {10};
-        double[] datacenters = {2};
-        Constants.NO_OF_TASKS = 10;
-        Constants.NO_OF_DATA_CENTERS = 2;
-        do_everything(args);
+        double[] tasks = {10, 20, 30, 40, 50};
+        double[] datacenters = {10};
+        for (double task : tasks) {
+            Constants.NO_OF_TASKS = (int) task;
+            for (double datacenter : datacenters) {
+                Constants.NO_OF_DATA_CENTERS = (int) datacenter;
+                do_everything(args);
+
+            }
+        }
+        save_necessaries(tasks, datacenters);
 
 
+        tasks = new double[]{50};
+        datacenters = new double[]{2, 5, 8, 10};
+        for (double task : tasks) {
+            Constants.NO_OF_TASKS = (int) task;
+            for (double datacenter : datacenters) {
+                Constants.NO_OF_DATA_CENTERS = (int) datacenter;
+                do_everything(args);
+            }
+        }
+        save_necessaries(tasks, datacenters);
+
+
+
+
+        tasks = new double[]{200, 400, 600, 800, 1000};
+        datacenters = new double[]{200};
+        for (double task : tasks) {
+            Constants.NO_OF_TASKS = (int) task;
+            for (double datacenter : datacenters) {
+                Constants.NO_OF_DATA_CENTERS = (int) datacenter;
+                do_everything(args);
+            }
+        }
+        save_necessaries(tasks, datacenters);
+
+
+
+        tasks = new double[]{1000};
+        datacenters = new double[]{50, 100, 150, 200};
+        for (double task : tasks) {
+            Constants.NO_OF_TASKS = (int) task;
+            for (double datacenter : datacenters) {
+                Constants.NO_OF_DATA_CENTERS = (int) datacenter;
+                do_everything(args);
+            }
+        }
+        save_necessaries(tasks, datacenters);
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+    private static void save_necessaries(double[] tasks, double[] datacenters){
         List<String> types = new ArrayList<>();
         types.add("fcfs");
         types.add("sjf");
@@ -148,7 +206,6 @@ public class Main {
 
 
         }
-
     }
 
     private static void show_chart_1(int task, String yAxis, List<double[]> datacenterDataList, List<String> types, double[] datacenters) {
@@ -306,6 +363,7 @@ public class Main {
             double totalCost = 0;
             double totalWaitingTime = 0;
             double cpuTotalTime = 0;
+            double totalRam = 0.0;
 
             int success = 0;
             for (int i = 0; i < size; i++) {
@@ -313,6 +371,7 @@ public class Main {
 
                 String cloudletId = dft.format(cloudlet.getCloudletId());
                 //status
+                // Here we check for the deadline
                 String status = cloudlet.getCloudletStatus() == Cloudlet.SUCCESS & cloudlet.getFinishTime() < 2200? "SUCCESS" : "Failure";
                 if (status.equals("SUCCESS")){
                     success += 1;
@@ -337,12 +396,17 @@ public class Main {
                 double ramUtilization5 = (double) cloudlet.getUtilizationOfRam(System.currentTimeMillis());
                 double ramUtilization6 = (double) cloudlet.getUtilizationOfRam(CloudSim.clock());
 
+                totalRam += ramUtilization1;
+
                 String ramUtilization1Data = dft.format(ramUtilization1);
                 String ramUtilization2Data = dft.format(ramUtilization2);
                 String ramUtilization3Data = dft.format(ramUtilization3);
                 String ramUtilization4Data = dft.format(ramUtilization4);
                 String ramUtilization5Data = dft.format(ramUtilization5);
                 String ramUtilization6Data = dft.format(ramUtilization6);
+
+
+
 
 
 //                cpuTotalTime += cloudlet.getActualCPUTime() / execMatrix[i][dcId];
@@ -406,6 +470,11 @@ public class Main {
             }
             String[] totalPowerRow = {"Total Power:", String.valueOf(totalPower)};
             writer.writeNext(totalPowerRow);
+
+
+            double averageRamUtilization = totalRam / Constants.NO_OF_TASKS;
+            String[] avgRamRow = {"Average Ram:", String.valueOf(averageRamUtilization)};
+            writer.writeNext(avgRamRow);
 
 
             if (type == 0) {
