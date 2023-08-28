@@ -109,8 +109,6 @@ public class Main {
 
 
 
-
-
     }
 
     private static void save_necessaries(double[] tasks, double[] datacenters){
