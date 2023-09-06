@@ -10,6 +10,9 @@ Related to the article that is going to be published.
 - What is iFogSim : https://amirkabir-science.com/cloudsim-free-course/
 - iFogSim Workshop : youtube.com/watch?v=rEy_rSRfXIc
 
+## Last Step
+- Send the pseudo Code of Double Q-Learning
+  
 ## Comments
 - The power cannot be reported beause there is no power-based method used in the process (like DVFS, etc.).
 - Successful rate and memory have to be revised
