@@ -33,6 +33,9 @@ import java.util.List;
 
 
 public class Main {
+
+
+
     public static void main(String[] args) {
 //        double[] tasks = {10, 20, 30, 40, 50, 200, 400, 600, 800, 1000};
 //        double[] datacenters = {2, 5, 8, 10, 50, 100, 150, 200};

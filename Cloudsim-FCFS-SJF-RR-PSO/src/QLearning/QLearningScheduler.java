@@ -22,6 +22,10 @@ import java.util.List;
 
 public class QLearningScheduler {
 
+    public static boolean doCheckpointing = false;
+    public static int faultyVMPercentage = 10;
+
+
     private static List<Cloudlet> cloudletList;
     private static List<Vm> vmList;
     private static PowerDatacenter[] datacenter;
@@ -97,6 +101,33 @@ public class QLearningScheduler {
             cloudlet[i].setUserId(userId);
             cloudlet[i].setVmId(dcId + 2);
             list.add(cloudlet[i]);
+        }
+        return enableFaults(list);
+    }
+
+    private static List<Cloudlet> enableFaults(List<Cloudlet> list) {
+        if (doCheckpointing){
+            int len = (faultyVMPercentage * vmList.size() / 100);
+            for (int i=0; i<len; i++){
+
+                int cnt = 0;
+                int vmID = vmList.get(i).getId();
+
+                for (Cloudlet c:list){
+                    if(c.getVmId() == vmID){
+                        cnt++;
+                    }
+                }
+
+                cnt /= 2;
+
+                for (Cloudlet c:list){
+                    if((c.getVmId() == vmID) && cnt>=0){
+                        c.setCloudletLength(c.getCloudletLength() * 2);
+                        cnt --;
+                    }
+                }
+            }
         }
         return list;
     }

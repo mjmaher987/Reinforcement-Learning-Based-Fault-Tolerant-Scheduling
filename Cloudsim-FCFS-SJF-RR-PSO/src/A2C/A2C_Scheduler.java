@@ -12,7 +12,8 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
-
+import static QLearning.QLearningScheduler.doCheckpointing;
+import static QLearning.QLearningScheduler.faultyVMPercentage;
 
 
 // Implementing A2C Scheduler: Advantage Actor-Critic
@@ -93,6 +94,33 @@ public class A2C_Scheduler {
             cl.setUserId(userId);
             cl.setVmId(dcId + 2);
             list.add(cl);
+        }
+        return enableFaults(list);
+    }
+
+    private static List<Cloudlet> enableFaults(List<Cloudlet> list) {
+        if (doCheckpointing){
+            int len = (faultyVMPercentage * vmList.size() / 100);
+            for (int i=0; i<len; i++){
+
+                int cnt = 0;
+                int vmID = vmList.get(i).getId();
+
+                for (Cloudlet c:list){
+                    if(c.getVmId() == vmID){
+                        cnt++;
+                    }
+                }
+
+                cnt /= 2;
+
+                for (Cloudlet c:list){
+                    if((c.getVmId() == vmID) && cnt>=0){
+                        c.setCloudletLength(c.getCloudletLength() * 2);
+                        cnt --;
+                    }
+                }
+            }
         }
         return list;
     }
