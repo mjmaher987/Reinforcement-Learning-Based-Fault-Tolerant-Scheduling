@@ -130,14 +130,11 @@ public class DoubleQLearningScheduler {
                 int vmID = vmList.get(i).getId();
 
                 for (Cloudlet c:list){
-                    if(c.getVmId() == vmID){
-                        cnt++;
+                    if((c.getVmId() == vmID) && cnt>=0){
+                        c.setCloudletLength(c.getCloudletLength() * 2);
+                        cnt --;
                     }
                 }
-
-                cnt /= 2;
-
-                list.get(cnt).setCloudletLength(list.get(cnt).getCloudletLength() * 2);
             }
 
             for (Cloudlet c:list){

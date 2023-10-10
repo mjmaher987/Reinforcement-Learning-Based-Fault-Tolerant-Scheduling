@@ -22,7 +22,7 @@ import java.util.List;
 
 public class QLearningScheduler {
 
-    public static boolean doCheckpointing = false;
+    public static boolean doCheckpointing = true;
     public static int faultyVMPercentage = 10;
 
 

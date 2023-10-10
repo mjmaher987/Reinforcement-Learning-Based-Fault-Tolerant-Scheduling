@@ -85,15 +85,15 @@ public class A2C_Scheduler {
         int pesNumber = 1;
         UtilizationModel utilizationModel = new UtilizationModelFull();
 
-//        Cloudlet[] cloudlet = new Cloudlet[cloudlets];
+        Cloudlet[] cloudlet = new Cloudlet[cloudlets];
 
         for (int i = 0; i < cloudlets; i++) {
             int dcId = (int) (Math.random() * Constants.NO_OF_DATA_CENTERS);
             long length = (long) (1e3 * (commMatrix[i][dcId] + execMatrix[i][dcId]));
-            Cloudlet cl = new Cloudlet(idShift + i, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
-            cl.setUserId(userId);
-            cl.setVmId(dcId + 2);
-            list.add(cl);
+            cloudlet[i] = new Cloudlet(idShift + i, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
+            cloudlet[i].setUserId(userId);
+            cloudlet[i].setVmId(dcId + 2);
+            list.add(cloudlet[i]);
         }
         return enableFaults(list);
     }
@@ -163,10 +163,10 @@ public class A2C_Scheduler {
                 datacenter[i] = DatacenterCreator.createDatacenter("Datacenter_" + i);
             }
             // getPower()
-            A2CDataCenterBroker broker = createBroker("Broker");
+            A2CDataCenterBroker broker = createBroker("Broker_0");
 
-            cloudletList = createCloudlet(broker.getId(), Constants.NO_OF_TASKS, 0);
             vmList = createVM(broker.getId(), Constants.NO_OF_DATA_CENTERS);
+            cloudletList = createCloudlet(broker.getId(), Constants.NO_OF_TASKS, 0);
 
             broker.submitCloudletList(cloudletList);
             broker.submitVmList(vmList);
@@ -184,6 +184,7 @@ public class A2C_Scheduler {
             Log.printLine("A2C Scheduler finished!");
         } catch (Exception e) {
             Log.printLine("Unwanted errors happen");
+            Log.printLine(e.getMessage());
         }
         return end_time - start_time;
     }
@@ -204,7 +205,7 @@ public class A2C_Scheduler {
     }
 
     public static List<Cloudlet> getList() {
-        return A2C_Scheduler.resultList;
+        return resultList;
     }
 
     public static List<Cloudlet> getCloudletList(){
