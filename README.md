@@ -7,7 +7,6 @@ Related to the article that is going to be published.
 
 ## Helpers
 - How to set up CloudSim : https://github.com/AtheerAlgherairy/Cloudsim-FCFS-SJF-RR-PSO-
-- 
 - What is iFogSim : https://amirkabir-science.com/cloudsim-free-course/
 - iFogSim Workshop : youtube.com/watch?v=rEy_rSRfXIc
 
